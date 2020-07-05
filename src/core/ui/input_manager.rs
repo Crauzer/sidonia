@@ -1,7 +1,6 @@
 use clipboard_win::{get_clipboard_string, set_clipboard_string};
 use crossbeam_utils::atomic::AtomicCell;
 use imgui::{ClipboardBackend, Context, ImStr, ImString, Key};
-use log::info;
 use winapi::{
     shared::{
         minwindef::{LPARAM, LRESULT, WPARAM},

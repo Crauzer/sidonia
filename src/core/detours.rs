@@ -1,17 +1,7 @@
-use crate::core::{
-    d3d9::direct3d9::IDirect3D9,
-    riot::{
-        logger::{RiotLogSeverityLevel, RiotLogTags, RiotLogger},
-        x3d::d3d9::device::X3dD3d9Device,
-    },
-    utilities::memory,
-};
+use crate::core::{riot::x3d::d3d9::device::X3dD3d9Device, utilities::memory};
 use detour::static_detour;
-use std::{error::Error, ffi, mem};
-use winapi::{
-    ctypes::{c_char, c_int},
-    shared::{d3d9::LPDIRECT3DDEVICE9, minwindef::LPVOID},
-};
+use std::{error::Error, mem};
+use winapi::{ctypes::c_int, shared::minwindef::LPVOID};
 
 // InitRenderer
 static_detour! { pub static InitRendererHook: unsafe extern "thiscall" fn(LPVOID) -> c_int; }

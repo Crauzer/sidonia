@@ -8,7 +8,6 @@ use crate::core::riot::{
         device::X3dIDevice,
         device_type::X3dDeviceType,
         format::X3dFormat,
-        main::X3dIMain,
         present_parameters::X3dPresentParameters,
         surface::X3dISurface,
     },

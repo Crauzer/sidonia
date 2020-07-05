@@ -1,5 +1,3 @@
-use winapi::shared::minwindef::LPVOID;
-
 #[repr(C)]
 pub struct R3dColorFormat {
     bits: u32,

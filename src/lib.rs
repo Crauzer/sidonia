@@ -2,28 +2,21 @@
 #![feature(abi_thiscall)]
 #![feature(c_variadic)]
 #![feature(move_ref_pattern)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
+#![allow(unused_assignments)]
 
 #[macro_use]
 extern crate imgui;
 
-use crate::core::{
-    utilities::{logging, message_box::show_message},
-    Core, CoreExitReason,
-};
+use crate::core::{utilities::logging, Core};
 use std::{
-    fs, mem, ptr,
-    sync::{Arc, Mutex, RwLock},
+    ptr,
+    sync::{Arc, Mutex},
 };
 use winapi::{
-    _core::time::Duration,
-    shared::minwindef::{BOOL, DWORD, FALSE, HINSTANCE, LPVOID, TRUE},
-    um::{
-        libloaderapi::DisableThreadLibraryCalls,
-        minwinbase::LPTHREAD_START_ROUTINE,
-        processthreadsapi::CreateThread,
-        winnt,
-        winuser::{MessageBoxA, MB_ICONINFORMATION, MB_OK},
-    },
+    shared::minwindef::{BOOL, DWORD, HINSTANCE, LPVOID, TRUE},
+    um::{libloaderapi::DisableThreadLibraryCalls, processthreadsapi::CreateThread, winnt},
 };
 
 pub mod core;

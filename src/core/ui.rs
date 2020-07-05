@@ -1,12 +1,5 @@
-use crate::core::{
-    d3d9::direct3d9::IDirect3D9,
-    game::Game,
-    riot::{r3d::render_layer::R3dRenderLayer, x3d::d3d9::device::X3dD3d9Device},
-    ui::input_manager::InputManager,
-};
-use imgui::{DrawData, Window};
-use imgui_dx9_renderer::IDirect3DDevice9;
-use std::{error::Error, mem, mem::MaybeUninit, ptr::NonNull};
+use crate::core::{game::Game, riot::x3d::d3d9::device::X3dD3d9Device, ui::input_manager::InputManager};
+use std::{mem::MaybeUninit, ptr::NonNull};
 use winapi::{
     shared::{d3d9types::D3DDEVICE_CREATION_PARAMETERS, windef::RECT},
     um::winuser::GetClientRect,

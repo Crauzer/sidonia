@@ -1,11 +1,4 @@
-use crate::core::{
-    detours,
-    riot::logger::{RiotLogSeverityLevel, RiotLogTags, RiotLogger},
-};
-use core::ffi;
-use std::{ffi::CString, fs, mem};
-use vsprintf::vsprintf;
-use winapi::{ctypes::c_char, shared::minwindef::LPVOID};
+use std::fs;
 
 pub(crate) fn initialize() -> Result<(), fern::InitError> {
     let _ = fs::create_dir_all("sidonia/logs");

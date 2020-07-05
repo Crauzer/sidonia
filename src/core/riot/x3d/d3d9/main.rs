@@ -1,9 +1,5 @@
-use crate::core::d3d9::direct3d9::IDirect3D9;
 use imgui_dx9_renderer::IDirect3DDevice9;
-use winapi::{
-    shared::{d3d9::LPDIRECT3DDEVICE9, minwindef::LPVOID},
-    um::winnt::VOID,
-};
+use winapi::shared::{d3d9::LPDIRECT3DDEVICE9, minwindef::LPVOID};
 
 #[repr(C)]
 #[derive(Debug)]

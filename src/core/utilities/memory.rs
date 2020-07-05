@@ -1,5 +1,5 @@
-use std::ptr;
-use winapi::{_core::time::Duration, shared::minwindef::LPVOID, um::libloaderapi::GetModuleHandleA};
+use core::time::Duration;
+use winapi::shared::minwindef::LPVOID;
 
 static mut BASE: Option<u32> = None;
 

@@ -1,9 +1,7 @@
 use crate::core::{
     riot::{game_clock::RiotGameClock, r3d::render_layer::R3dRenderLayer, render_pipeline::RiotRenderPipeline},
-    utilities::{memory, message_box::show_message},
+    utilities::memory,
 };
-use std::ptr;
-use winapi::shared::minwindef::LPVOID;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -25,22 +23,20 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        unsafe {
-            log::info!("Initializing Game...");
+        log::info!("Initializing Game...");
 
-            let game_state = Game::fetch_game_state();
-            log::info!("GameState: {:#?}", game_state);
+        let game_state = Game::fetch_game_state();
+        log::info!("GameState: {:#?}", game_state);
 
-            let render_pipeline = Game::fetch_render_pipeline();
-            let renderer = Game::fetch_renderer();
-            let game_clock = Game::fetch_game_clock();
+        let render_pipeline = Game::fetch_render_pipeline();
+        let renderer = Game::fetch_renderer();
+        let game_clock = Game::fetch_game_clock();
 
-            Game {
-                game_state,
-                game_clock,
-                render_pipeline,
-                renderer,
-            }
+        Game {
+            game_state,
+            game_clock,
+            render_pipeline,
+            renderer,
         }
     }
 

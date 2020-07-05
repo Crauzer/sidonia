@@ -1,18 +1,10 @@
 use crate::{
     core::{
-        d3d9::direct3d9::IDirect3D9,
         game::{Game, GameState},
-        riot::{r3d::render_layer::R3dRenderLayer, x3d::d3d9::device::X3dD3d9Device},
+        riot::x3d::d3d9::device::X3dD3d9Device,
         ui::Ui,
     },
     CORE,
-};
-use imgui_dx9_renderer::IDirect3DDevice9;
-use std::error::Error;
-use winapi::{
-    _core::ptr::NonNull,
-    ctypes::c_int,
-    shared::{d3d9::LPDIRECT3DDEVICE9, minwindef::LPVOID},
 };
 
 pub mod d3d9;
@@ -60,7 +52,7 @@ impl Core {
         //unsafe { detours::initialize_init_renderer_hook(Core::init_renderer).expect("Failed to hook InitRenderer"); }
 
         unsafe {
-            detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene);
+            detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene).expect("Failed to initialize EndScene hook");
         }
 
         Core {

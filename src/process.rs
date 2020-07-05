@@ -6,7 +6,7 @@ use winapi::{
         handleapi::CloseHandle,
         memoryapi::{ReadProcessMemory, VirtualAllocEx, VirtualProtectEx, WriteProcessMemory},
         processthreadsapi::OpenProcess,
-        psapi::{EnumProcessModules, EnumProcesses, GetModuleFileNameExW},
+        psapi::{EnumProcessModules, GetModuleFileNameExW},
         tlhelp32::{CreateToolhelp32Snapshot, Process32First, Process32Next, PROCESSENTRY32, TH32CS_SNAPPROCESS},
         winnt::{
             HANDLE, MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE, PAGE_READWRITE, PROCESS_QUERY_INFORMATION, PROCESS_VM_OPERATION,
