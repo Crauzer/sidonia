@@ -59,6 +59,11 @@ impl Ui {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.imgui_renderer = None;
+        self.input_manager = None;
+    }
+
     pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {
         match (game.is_renderer_initialized(), self.imgui_renderer.as_mut()) {
             // Game renderer is initialized so we also initialize our UI renderer

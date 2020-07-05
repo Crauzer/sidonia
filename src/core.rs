@@ -6,6 +6,7 @@ use crate::{
     },
     CORE,
 };
+use winapi::shared::{d3d9::IDirect3DDevice9, d3d9types::D3DPRESENT_PARAMETERS};
 
 pub mod d3d9;
 pub mod detours;
@@ -53,6 +54,7 @@ impl Core {
 
         unsafe {
             detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene).expect("Failed to initialize EndScene hook");
+            detours::initialize_riot_x3d_d3d9_device_reset_hook(Core::reset_device).expect("Failed to initialize ResetDevice hook");
         }
 
         Core {
@@ -98,9 +100,28 @@ impl Core {
             detours::RiotX3dD3D9DeviceEndSceneHook.call(device);
         }
     }
+    fn reset_device(device: *mut IDirect3DDevice9, present_parameters: *mut D3DPRESENT_PARAMETERS) {
+        log::info!("Resetting device...");
 
-    //fn init_renderer(unk: LPVOID) -> c_int {
-    //    log::info!("INITIALIZING RENDERER");
-    //    unsafe { detours::InitRendererHook.call(unk) }
-    //}
+        unsafe {
+            match (device.as_mut(), present_parameters.as_mut()) {
+                (Some(device), Some(present_parameters)) => {
+                    // Invalidate UI renderer here so it can get updated
+                    // Grab CORE
+                    if let Some(core) = CORE.as_mut() {
+                        // Grab a MutexGuard to CORE
+                        let mut core = core.lock().unwrap();
+
+                        core.ui_mut().reset();
+                    }
+                }
+                _ => {
+                    // Panic here because we can't render UI anymore
+                    panic!("ResetDevice hook received either a null IDirect3DDevice9 or null D3DPRESENT_PARAMETERS");
+                }
+            }
+
+            detours::RiotX3dD3d9DeviceResetHook.call(device, present_parameters);
+        }
+    }
 }

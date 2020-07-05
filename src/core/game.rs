@@ -68,8 +68,6 @@ impl Game {
             self.game_state = new_game_state;
         }
 
-        log::info!("clock: {:#?}", self.game_clock);
-
         self.game_state
     }
 
