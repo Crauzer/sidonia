@@ -106,12 +106,12 @@ impl Core {
         unsafe {
             match (device.as_mut(), present_parameters.as_mut()) {
                 (Some(device), Some(present_parameters)) => {
-                    // Invalidate UI renderer here so it can get updated
                     // Grab CORE
                     if let Some(core) = CORE.as_mut() {
                         // Grab a MutexGuard to CORE
                         let mut core = core.lock().unwrap();
 
+                        // Invalidate UI renderer here so it can get updated
                         core.ui_mut().reset();
                     }
                 }

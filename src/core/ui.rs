@@ -84,13 +84,40 @@ impl Ui {
                     });
 
                 if let Some(game_clock) = game.game_clock() {
-                    imgui::Window::new(im_str!("GameClock"))
-                        .size([150.0, 150.0], imgui::Condition::FirstUseEver)
+                    imgui::Window::new(im_str!("gGameClock"))
+                        .size([150.0, 180.0], imgui::Condition::FirstUseEver)
                         .build(&ui_frame, || {
                             ui_frame.text(format!("Is Initialized: {}", game_clock.is_initialized()));
                             ui_frame.separator();
                             ui_frame.text(format!("Current Time: {:.3}", game_clock.current_time()));
                             ui_frame.text(format!("Time Delta: {:.5}", game_clock.time_delta()));
+                        });
+                }
+
+                if let Some(game_renderer) = game.renderer_mut() {
+                    imgui::Window::new(im_str!("gRenderer"))
+                        .size([150.0, 300.0], imgui::Condition::Appearing)
+                        .build(&ui_frame, || {
+                            ui_frame.text(format!("Is Initialized: {}", game_renderer.is_initialized()));
+                            ui_frame.separator();
+                            ui_frame.spacing();
+
+                            if imgui::CollapsingHeader::new(im_str!("Stats"))
+                                .default_open(true)
+                                .build(&ui_frame)
+                            {
+                                let stats = game_renderer.stats();
+
+                                ui_frame.text(format!("Texture       Memory: {}", stats.texture_memory()));
+                                ui_frame.text(format!("Buffer        Memory: {}", stats.buffer_memory()));
+                                ui_frame.text(format!("Screen Buffer Memory: {}", stats.texture_memory()));
+                                ui_frame.text(format!("Material Change Count: {}", stats.material_change_count()));
+                                ui_frame.text(format!("Mode Changes    Count: {}", stats.mode_changes_count()));
+                                ui_frame.text(format!("Texture Changes Count: {}", stats.texture_changes_count()));
+                                ui_frame.text(format!("Tris Rendered   Count: {}", stats.triangles_rendered_count()));
+                                ui_frame.text(format!("Average Strip Length: {}", stats.average_strip_length()));
+                                ui_frame.text(format!("Draw Count: {}", stats.draw_count()));
+                            }
                         });
                 }
 
