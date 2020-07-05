@@ -1,0 +1,25 @@
+[package]
+name = "sidonia"
+version = "0.1.0"
+authors = ["Crauzer"]
+edition = "2018"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+imgui = "0.4.0"
+imgui-dx9-renderer = "0.4.0"
+winapi = { version="0.3.8", features = ["winnt", "processthreadsapi", "psapi", "tlhelp32", "std", "memoryapi", "libloaderapi", "minwinbase", "winuser", "windowsx"] }
+log = "0.4.8"
+fern = "0.6.0"
+chrono = "0.4.11"
+log-panics = "2.0.0"
+num-traits = "0.2"
+num-derive = "0.3"
+detour = "0.7.1"
+vsprintf = "2.0.0"
+crossbeam-utils = "0.7.2"
+clipboard-win = "3.1.1"
+
+[lib]
+name = "sidonia_core"
+crate-type = ["cdylib"]

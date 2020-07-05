@@ -1,0 +1,106 @@
+use winapi::shared::windef::HWND;
+use crate::core::riot::x3d::main::X3dIMain;
+use crate::core::riot::x3d::device::X3dIDevice;
+use crate::core::riot::x3d::surface::X3dISurface;
+use crate::core::riot::r3d::screen_buffer::R3dScreenBuffer;
+use crate::core::riot::x3d::present_parameters::X3dPresentParameters;
+use num_derive::{FromPrimitive, ToPrimitive};
+use crate::core::riot::x3d::caps::X3dCaps;
+use crate::core::riot::r3d::vector3::{R3dVector3};
+use crate::core::riot::r3d::matrix44::R3dMatrix44;
+use crate::core::riot::r3d::plane::R3dPlane;
+use crate::core::riot::x3d::device_type::X3dDeviceType;
+use crate::core::riot::x3d::d3d9::main::X3dD3d9Main;
+use crate::core::riot::r3d::texture::R3dTexture;
+use crate::core::riot::x3d::format::X3dFormat;
+use crate::core::riot::r3d::color::R3dColor;
+use crate::core::riot::x3d::d3d9::device::X3dD3d9Device;
+
+#[repr(C)]
+#[derive(Debug)]
+pub struct R3dRenderLayer {
+    is_initialized: u32,
+    hlib_win: HWND,
+    light_type_dx8: u32,
+    device_type: X3dDeviceType,
+    r3d_main: *mut X3dD3d9Main,
+    r3d_device1: *mut X3dD3d9Device,
+    r3d_device2: *mut X3dIDevice,
+    default_back_buffer: *mut X3dISurface,
+    default_depth_stencil: *mut X3dISurface,
+    current_render_target: *mut R3dScreenBuffer,
+    is_driver_up_to_date: bool,
+    limit_gpu_usage: bool,
+    unk1: u32,
+    unk2: u32,
+    present_parameters: X3dPresentParameters,
+    end_of_frame_behavior: R3dEndOfFrameBehavior,
+    end_of_frame_behavior_period: u32,
+    caps: X3dCaps,
+    camera_position: R3dVector3,
+    camera_matrix: R3dMatrix44,
+    projection_matrix: R3dMatrix44,
+    vec_frustum: [R3dVector3; 8],
+    plane_frustum: [R3dPlane; 6],
+    inverse_world_matrix: R3dMatrix44,
+    near_clip: f32,
+    far_clip: f32,
+    first_texture: *mut R3dTexture,
+    best_texture_format: X3dFormat,
+    start_x: i32,
+    start_y: i32,
+    current_bpp: i32,
+    screen_matrix: R3dMatrix44,
+    view_x: u32,
+    view_y: u32,
+    view_width: u32,
+    view_height: u32,
+    use_32_bpp_textures: u32,
+    force_32_bpp_textures: u32,
+    constant_color_value: R3dColor,
+    ambient_color: R3dColor,
+    back_clear_color: R3dColor,
+    stats: R3dRenderLayerStats,
+    error: R3dRenderLayerError
+}
+
+#[repr(C)]
+#[derive(Debug)]
+pub struct R3dRenderLayerStats {
+    texture_memory: i32,
+    buffer_memory: i32,
+    screen_buffer_memory: i32,
+    material_change_count: i32,
+    mode_changes_count: i32,
+    texture_changes_count: i32,
+    triangles_rendered_count: i32,
+    average_strip_length: i32,
+    draw_count: i32
+}
+
+#[repr(u32)]
+#[derive(Debug)]
+pub enum R3dRenderLayerError {
+    None = 0,
+    NoShader2 = 1,
+    FailedToCreateDevice = 2
+}
+
+#[repr(u32)]
+#[derive(FromPrimitive, ToPrimitive, Debug)]
+pub enum R3dEndOfFrameBehavior {
+    None = 0,
+    Flush = 1
+}
+
+impl R3dRenderLayer {
+    pub fn is_initialized(&self) -> bool {
+        self.is_initialized != 0
+    }
+
+    pub fn d3d9_main_mut(&mut self) -> Option<&'static mut X3dD3d9Main> {
+        unsafe {
+            self.r3d_main.as_mut::<'static>()
+        }
+    }
+}
