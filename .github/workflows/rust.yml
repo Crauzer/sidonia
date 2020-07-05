@@ -16,6 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        target: i686-pc-windows-msvc
     - name: Build
       run: cargo build --verbose
     - name: Run tests
