@@ -1,3 +1,1 @@
-pub struct X3dBaseTexture {
-
-}
+pub struct X3dBaseTexture {}

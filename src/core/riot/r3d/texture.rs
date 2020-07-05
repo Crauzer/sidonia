@@ -1,11 +1,11 @@
-use crate::core::msvc::string::StdString;
-use crate::core::riot::x3d::format::X3dFormat;
-use crate::core::riot::r3d::color::R3dColor;
-use crate::core::riot::r3d::color_format::R3dColorFormat;
+use crate::core::{
+    msvc::string::StdString,
+    riot::{
+        r3d::{asset_category::R3dAssetCategory, color::R3dColor, color_format::R3dColorFormat},
+        x3d::{base_texture::X3dBaseTexture, format::X3dFormat, texture::X3dTexture},
+    },
+};
 use winapi::shared::minwindef::LPVOID;
-use crate::core::riot::x3d::base_texture::X3dBaseTexture;
-use crate::core::riot::x3d::texture::X3dTexture;
-use crate::core::riot::r3d::asset_category::R3dAssetCategory;
 
 #[repr(C)]
 pub struct R3dTexture {

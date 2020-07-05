@@ -1,24 +1,28 @@
-use crate::core::game::{Game, GameState};
-use winapi::ctypes::c_int;
-use winapi::shared::minwindef::LPVOID;
-use winapi::_core::ptr::NonNull;
-use crate::core::riot::r3d::render_layer::R3dRenderLayer;
-use crate::core::d3d9::direct3d9::IDirect3D9;
-use crate::core::ui::Ui;
-use std::error::Error;
-use crate::CORE;
-use winapi::shared::d3d9::LPDIRECT3DDEVICE9;
+use crate::{
+    core::{
+        d3d9::direct3d9::IDirect3D9,
+        game::{Game, GameState},
+        riot::{r3d::render_layer::R3dRenderLayer, x3d::d3d9::device::X3dD3d9Device},
+        ui::Ui,
+    },
+    CORE,
+};
 use imgui_dx9_renderer::IDirect3DDevice9;
-use crate::core::riot::x3d::d3d9::device::X3dD3d9Device;
+use std::error::Error;
+use winapi::{
+    _core::ptr::NonNull,
+    ctypes::c_int,
+    shared::{d3d9::LPDIRECT3DDEVICE9, minwindef::LPVOID},
+};
 
+pub mod d3d9;
+pub mod detours;
 pub mod errors;
 pub mod game;
-pub mod utilities;
 pub mod msvc;
 pub mod riot;
-pub mod detours;
-pub mod d3d9;
 pub mod ui;
+pub mod utilities;
 
 pub struct Core {
     game: Game,
@@ -29,12 +33,12 @@ pub struct Core {
 pub enum CoreStatus {
     Idle,
     Running,
-    Exit
+    Exit,
 }
 
 #[derive(Debug)]
 pub enum CoreExitReason {
-    GameEnded
+    GameEnded,
 }
 
 impl From<GameState> for CoreStatus {
@@ -55,7 +59,9 @@ impl Core {
 
         //unsafe { detours::initialize_init_renderer_hook(Core::init_renderer).expect("Failed to hook InitRenderer"); }
 
-        unsafe { detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene); }
+        unsafe {
+            detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene);
+        }
 
         Core {
             game: Game::new(),
@@ -63,7 +69,9 @@ impl Core {
         }
     }
 
-    pub fn ui_mut(&mut self) -> &mut Ui { &mut self.ui }
+    pub fn ui_mut(&mut self) -> &mut Ui {
+        &mut self.ui
+    }
 
     pub fn update(&mut self, d3d9_device: &mut X3dD3d9Device) -> CoreStatus {
         let status = CoreStatus::from(self.game.update());
@@ -88,11 +96,9 @@ impl Core {
                 if let Some(device) = device.as_mut() {
                     let status = core.update(device);
                     match status {
-                        CoreStatus::Idle => {},
-                        CoreStatus::Running => {},
-                        CoreStatus::Exit => {
-
-                        }
+                        CoreStatus::Idle => {}
+                        CoreStatus::Running => {}
+                        CoreStatus::Exit => {}
                     }
                 }
             }

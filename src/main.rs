@@ -1,29 +1,33 @@
 use crate::process::Process;
-use std::ffi::CString;
-use std::{mem, ptr, env};
-use winapi::um::libloaderapi::{GetModuleHandleA, GetProcAddress};
-use winapi::um::processthreadsapi::CreateRemoteThread;
-use std::path::Path;
-use winapi::um::minwinbase::LPTHREAD_START_ROUTINE;
-use winapi::um::handleapi::CloseHandle;
+use std::{env, ffi::CString, mem, path::Path, ptr};
+use winapi::um::{
+    handleapi::CloseHandle,
+    libloaderapi::{GetModuleHandleA, GetProcAddress},
+    minwinbase::LPTHREAD_START_ROUTINE,
+    processthreadsapi::CreateRemoteThread,
+};
 
 mod process;
 
-fn main() { unsafe {
-    let mut process: Option<Process> = None;
-    while let None = process {
-        process = Process::find_by_exe("League of Legends");
+fn main() {
+    unsafe {
+        let mut process: Option<Process> = None;
+        while let None = process {
+            process = Process::find_by_exe("League of Legends");
+        }
+
+        println!("Found League: {:#?}", process);
+
+        let process = process.unwrap();
+        inject_core(&process);
     }
-
-    println!("Found League: {:#?}", process);
-
-    let process = process.unwrap();
-    inject_core(&process);
-} }
+}
 
 unsafe fn inject_core(process: &Process) {
     let load_library_fn = GetProcAddress(
-        GetModuleHandleA(b"kernel32.dll\0".as_ptr().cast()), b"LoadLibraryA\0".as_ptr().cast());
+        GetModuleHandleA(b"kernel32.dll\0".as_ptr().cast()),
+        b"LoadLibraryA\0".as_ptr().cast(),
+    );
 
     println!("load_library_fn: {:#?}", load_library_fn);
 

@@ -2,7 +2,7 @@ use winapi::shared::minwindef::LPVOID;
 
 #[repr(C)]
 pub struct RiotTickInterface {
-    vtbl: LPVOID
+    vtbl: LPVOID,
 }
 
 #[repr(C)]
@@ -10,13 +10,13 @@ pub struct RiotClockInterface {
     vtbl: LPVOID,
     master: *mut RiotClockInterface,
     multiplier: f64,
-    is_controllable: bool
+    is_controllable: bool,
 }
 
 #[repr(C)]
 pub struct RiotClockController {
     tick_interface: RiotTickInterface,
-    clock_interface: *mut RiotClockInterface
+    clock_interface: *mut RiotClockInterface,
 }
 
 #[repr(C)]
@@ -29,15 +29,12 @@ pub struct RiotGameClock {
     min_multiplier: f32,
     max_multiplier: f32,
     multiplier_control: i32,
-    paused_mutliplier: f32
+    paused_mutliplier: f32,
 }
 
 impl RiotGameClock {
-
     pub fn controller(&self) -> Option<&'static RiotClockController> {
-        unsafe {
-            self.controller.as_ref::<'static>()
-        }
+        unsafe { self.controller.as_ref::<'static>() }
     }
     pub fn is_initialized(&self) -> bool {
         self.is_initialized

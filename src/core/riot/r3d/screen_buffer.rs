@@ -1,9 +1,8 @@
-use crate::core::riot::x3d::surface::X3dISurface;
-use crate::core::riot::x3d::texture::X3dTexture;
-use crate::core::riot::r3d::texture::R3dTexture;
-use winapi::ctypes::c_char;
-use crate::core::riot::x3d::format::X3dFormat;
-use winapi::shared::minwindef::LPVOID;
+use crate::core::riot::{
+    r3d::texture::R3dTexture,
+    x3d::{format::X3dFormat, surface::X3dISurface, texture::X3dTexture},
+};
+use winapi::{ctypes::c_char, shared::minwindef::LPVOID};
 
 #[repr(C)]
 #[derive(Debug)]
@@ -25,5 +24,5 @@ pub struct R3dScreenBuffer {
     width: u32,
     height: u32,
     debug_location: *const c_char,
-    flags: u32
+    flags: u32,
 }

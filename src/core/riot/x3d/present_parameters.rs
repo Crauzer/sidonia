@@ -1,7 +1,5 @@
-use crate::core::riot::x3d::format::X3dFormat;
+use crate::core::riot::x3d::{format::X3dFormat, multisample_type::X3dMultiSampleType, swap_effect_type::X3dSwapEffectType};
 use winapi::shared::windef::HWND;
-use crate::core::riot::x3d::swap_effect_type::X3dSwapEffectType;
-use crate::core::riot::x3d::multisample_type::X3dMultiSampleType;
 
 #[repr(C)]
 #[derive(Debug)]
@@ -19,5 +17,5 @@ pub struct X3dPresentParameters {
     auto_depth_stencil_format: X3dFormat,
     flags: u32,
     fullscreen_refresh_rate_hz: u32,
-    presentation_interval: i32
+    presentation_interval: i32,
 }

@@ -5,5 +5,5 @@ use winapi::shared::minwindef::LPVOID;
 pub struct StdVector<T> {
     start: *mut T,
     end: *mut T,
-    capacity: *mut T
+    capacity: *mut T,
 }

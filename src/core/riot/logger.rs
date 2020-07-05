@@ -1,7 +1,5 @@
-use crate::core::riot::mutex::RiotMutex;
-use crate::core::msvc::vector::StdVector;
-use winapi::ctypes::c_char;
-use winapi::shared::minwindef::LPCVOID;
+use crate::core::{msvc::vector::StdVector, riot::mutex::RiotMutex};
+use winapi::{ctypes::c_char, shared::minwindef::LPCVOID};
 
 pub type RiotLogTags = u64;
 
@@ -11,7 +9,7 @@ pub enum RiotLogSeverityLevel {
     Ok = 0,
     Warning = 1,
     Error = 2,
-    Always = 3
+    Always = 3,
 }
 
 #[repr(C)]
@@ -43,15 +41,15 @@ struct __cppobj Riot::Logger::LogTarget : IRiotLogTarget
 #[allow(non_snake_case)]
 #[repr(C)]
 pub struct IRiotLogTarget {
-    GetVersion: extern fn() -> u32,
-    SetMinimumSeverityToBeLogged: extern fn(*mut IRiotLogTarget, RiotLogSeverityLevel),
-    GetMinimumSeverityToBeLogged: extern fn(*const IRiotLogTarget) -> RiotLogSeverityLevel,
-    SetTags: extern fn(*mut IRiotLogTarget, RiotLogTags, RiotLogTags),
-    GetRequiredTags: extern fn(*const IRiotLogTarget) -> RiotLogTags,
-    GetExcludedTags: extern fn(*const IRiotLogTarget) -> RiotLogTags,
-    GetEmbellishmentFormat: extern fn(*const IRiotLogTarget, LPCVOID /*TODO: RiotLogEntry*/ ) -> *const c_char,
-    Enable: extern fn(*mut IRiotLogTarget),
-    Disable: extern fn(*mut IRiotLogTarget),
-    IsEnabled: extern fn(*const IRiotLogTarget) -> bool,
-    AppendToLog: extern fn(*mut IRiotLogTarget, LPCVOID /*TODO: RiotLogEntry*/)
+    GetVersion: extern "C" fn() -> u32,
+    SetMinimumSeverityToBeLogged: extern "C" fn(*mut IRiotLogTarget, RiotLogSeverityLevel),
+    GetMinimumSeverityToBeLogged: extern "C" fn(*const IRiotLogTarget) -> RiotLogSeverityLevel,
+    SetTags: extern "C" fn(*mut IRiotLogTarget, RiotLogTags, RiotLogTags),
+    GetRequiredTags: extern "C" fn(*const IRiotLogTarget) -> RiotLogTags,
+    GetExcludedTags: extern "C" fn(*const IRiotLogTarget) -> RiotLogTags,
+    GetEmbellishmentFormat: extern "C" fn(*const IRiotLogTarget, LPCVOID /*TODO: RiotLogEntry*/) -> *const c_char,
+    Enable: extern "C" fn(*mut IRiotLogTarget),
+    Disable: extern "C" fn(*mut IRiotLogTarget),
+    IsEnabled: extern "C" fn(*const IRiotLogTarget) -> bool,
+    AppendToLog: extern "C" fn(*mut IRiotLogTarget, LPCVOID /*TODO: RiotLogEntry*/),
 }

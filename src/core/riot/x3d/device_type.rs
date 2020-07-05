@@ -4,5 +4,5 @@ use num_derive::{FromPrimitive, ToPrimitive};
 #[derive(FromPrimitive, ToPrimitive, Debug)]
 pub enum X3dDeviceType {
     Hal = 0,
-    Ref = 1
+    Ref = 1,
 }

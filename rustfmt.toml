@@ -1,1 +1,3 @@
 max_width = 140
+merge_imports = true
+reorder_imports = true

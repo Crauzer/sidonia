@@ -1,15 +1,18 @@
-use std::time::Duration;
-use std::{mem, ptr, thread};
-use winapi::ctypes::c_void;
-use winapi::shared::minwindef::{DWORD, HMODULE, LPCVOID, LPVOID, MAX_PATH};
-use winapi::um::handleapi::CloseHandle;
-use winapi::um::memoryapi::{ReadProcessMemory, VirtualAllocEx, VirtualProtectEx, WriteProcessMemory};
-use winapi::um::processthreadsapi::OpenProcess;
-use winapi::um::psapi::{EnumProcessModules, EnumProcesses, GetModuleFileNameExW};
-use winapi::um::tlhelp32::{CreateToolhelp32Snapshot, Process32First, Process32Next, PROCESSENTRY32, TH32CS_SNAPPROCESS};
-use winapi::um::winnt::{
-    HANDLE, MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE, PAGE_READWRITE, PROCESS_QUERY_INFORMATION, PROCESS_VM_OPERATION, PROCESS_VM_READ,
-    PROCESS_VM_WRITE, SYNCHRONIZE, WCHAR,
+use std::{mem, ptr, thread, time::Duration};
+use winapi::{
+    ctypes::c_void,
+    shared::minwindef::{DWORD, HMODULE, LPCVOID, LPVOID, MAX_PATH},
+    um::{
+        handleapi::CloseHandle,
+        memoryapi::{ReadProcessMemory, VirtualAllocEx, VirtualProtectEx, WriteProcessMemory},
+        processthreadsapi::OpenProcess,
+        psapi::{EnumProcessModules, EnumProcesses, GetModuleFileNameExW},
+        tlhelp32::{CreateToolhelp32Snapshot, Process32First, Process32Next, PROCESSENTRY32, TH32CS_SNAPPROCESS},
+        winnt::{
+            HANDLE, MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE, PAGE_READWRITE, PROCESS_QUERY_INFORMATION, PROCESS_VM_OPERATION,
+            PROCESS_VM_READ, PROCESS_VM_WRITE, SYNCHRONIZE, WCHAR,
+        },
+    },
 };
 
 #[derive(Debug)]
@@ -35,8 +38,12 @@ impl Process {
         }
     }
 
-    pub fn handle(&self) -> HANDLE { self.handle }
-    pub fn base(&self) -> u32 { self.base }
+    pub fn handle(&self) -> HANDLE {
+        self.handle
+    }
+    pub fn base(&self) -> u32 {
+        self.base
+    }
 
     pub fn find_by_exe(name: &str) -> Option<Self> {
         unsafe {
@@ -205,7 +212,9 @@ impl Process {
 }
 
 impl Drop for Process {
-    fn drop(&mut self) { unsafe {
-        CloseHandle(self.handle);
-    } }
+    fn drop(&mut self) {
+        unsafe {
+            CloseHandle(self.handle);
+        }
+    }
 }

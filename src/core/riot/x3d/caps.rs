@@ -1,4 +1,3 @@
-
 #[repr(C)]
 #[derive(Debug)]
 pub struct X3dCaps {
@@ -12,5 +11,5 @@ pub struct X3dCaps {
     caps2: u32,
     simultaneous_rts_count: u32,
     max_poly_count_per_draw_call: u32,
-    max_vertex_count_per_draw_call: u32
+    max_vertex_count_per_draw_call: u32,
 }

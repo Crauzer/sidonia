@@ -25,5 +25,5 @@ pub enum X3dFormat {
     A8L8 = 0x13,
     L8 = 0x14,
     A2R10G10B10 = 0x15,
-    INTZ = 0x16
+    INTZ = 0x16,
 }

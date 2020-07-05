@@ -1,24 +1,23 @@
-use crate::core::riot::r3d::render_layer::R3dRenderLayer;
+use crate::core::{
+    d3d9::direct3d9::IDirect3D9,
+    game::Game,
+    riot::{r3d::render_layer::R3dRenderLayer, x3d::d3d9::device::X3dD3d9Device},
+    ui::input_manager::InputManager,
+};
 use imgui::{DrawData, Window};
-use std::error::Error;
-use std::ptr::NonNull;
-use std::mem;
-use crate::core::game::Game;
 use imgui_dx9_renderer::IDirect3DDevice9;
-use crate::core::d3d9::direct3d9::IDirect3D9;
-use crate::core::riot::x3d::d3d9::device::X3dD3d9Device;
-use winapi::um::winuser::GetClientRect;
-use std::mem::MaybeUninit;
-use winapi::shared::d3d9types::D3DDEVICE_CREATION_PARAMETERS;
-use winapi::shared::windef::RECT;
-use crate::core::ui::input_manager::InputManager;
+use std::{error::Error, mem, mem::MaybeUninit, ptr::NonNull};
+use winapi::{
+    shared::{d3d9types::D3DDEVICE_CREATION_PARAMETERS, windef::RECT},
+    um::winuser::GetClientRect,
+};
 
 pub mod input_manager;
 
 pub struct Ui {
     imgui_context: imgui::Context,
     imgui_renderer: Option<imgui_dx9_renderer::Renderer>,
-    input_manager: Option<InputManager>
+    input_manager: Option<InputManager>,
 }
 
 impl Ui {
@@ -26,7 +25,7 @@ impl Ui {
         Ui {
             imgui_context: imgui::Context::create(),
             imgui_renderer: None,
-            input_manager: None
+            input_manager: None,
         }
     }
 
@@ -44,19 +43,21 @@ impl Ui {
                 let rect = rect.assume_init();
 
                 log::info!("Initializing imgui input manager..");
-                self.input_manager = Some(InputManager::new(&mut self.imgui_context, creation_parameters.hFocusWindow)
-                    .expect("Failed to initialize imgui input manager"));
+                self.input_manager = Some(
+                    InputManager::new(&mut self.imgui_context, creation_parameters.hFocusWindow)
+                        .expect("Failed to initialize imgui input manager"),
+                );
 
                 log::info!("Initializing imgui renderer...");
-                self.imgui_context.io_mut().display_size = [
-                    (rect.right - rect.left) as f32,
-                    (rect.bottom - rect.top) as f32,
-                ];
+                self.imgui_context.io_mut().display_size = [(rect.right - rect.left) as f32, (rect.bottom - rect.top) as f32];
 
-                self.imgui_renderer = Some(imgui_dx9_renderer::Renderer::new(
-                    &mut self.imgui_context,
-                    NonNull::new(device).expect("Failed to create NonNull<IDirect3DDevice9>"))
-                    .expect("Failed to initialize imgui renderer"));
+                self.imgui_renderer = Some(
+                    imgui_dx9_renderer::Renderer::new(
+                        &mut self.imgui_context,
+                        NonNull::new(device).expect("Failed to create NonNull<IDirect3DDevice9>"),
+                    )
+                    .expect("Failed to initialize imgui renderer"),
+                );
 
                 log::info!("imgui renderer initialized successfully");
             } else {
@@ -70,7 +71,7 @@ impl Ui {
             // Game renderer is initialized so we also initialize our UI renderer
             (true, None) => {
                 self.initialize_imgui(d3d9_device);
-            },
+            }
             // Both the Game renderer and our renderer are initialized, do draw
             (true, Some(imgui_renderer)) => {
                 let ui_frame = self.imgui_context.frame();
@@ -81,10 +82,7 @@ impl Ui {
                         ui_frame.text(im_str!("EndScene Hook"));
                         ui_frame.separator();
                         let mouse_pos = ui_frame.io().mouse_pos;
-                        ui_frame.text(format!(
-                            "Mouse Position: ({:.1},{:.1})",
-                            mouse_pos[0], mouse_pos[1]
-                        ));
+                        ui_frame.text(format!("Mouse Position: ({:.1},{:.1})", mouse_pos[0], mouse_pos[1]));
                     });
 
                 if let Some(game_clock) = game.game_clock() {

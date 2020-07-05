@@ -1,7 +1,5 @@
-use winapi::shared::minwindef::LPVOID;
-use winapi::_core::time::Duration;
-use winapi::um::libloaderapi::GetModuleHandleA;
 use std::ptr;
+use winapi::{_core::time::Duration, shared::minwindef::LPVOID, um::libloaderapi::GetModuleHandleA};
 
 static mut BASE: Option<u32> = None;
 
@@ -28,11 +26,13 @@ pub fn convert_file_offset_to_ptr(offset: u32) -> LPVOID {
     (offset + (base() - IDA_BASE)) as LPVOID
 }
 
-pub fn wait_for_ptr_non_zero(ptr_address: LPVOID) -> LPVOID { unsafe {
-    let ptr = *(ptr_address as *mut LPVOID);
-    while ptr.is_null() {
-        std::thread::sleep(Duration::from_millis(10));
-    }
+pub fn wait_for_ptr_non_zero(ptr_address: LPVOID) -> LPVOID {
+    unsafe {
+        let ptr = *(ptr_address as *mut LPVOID);
+        while ptr.is_null() {
+            std::thread::sleep(Duration::from_millis(10));
+        }
 
-    ptr
-} }
+        ptr
+    }
+}

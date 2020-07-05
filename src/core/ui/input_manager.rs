@@ -9,14 +9,11 @@ use winapi::{
         windowsx::{GET_X_LPARAM, GET_Y_LPARAM},
     },
     um::winuser::{
-        CallWindowProcW, DefWindowProcW, GetKeyState, SetWindowLongA, GET_WHEEL_DELTA_WPARAM,
-        GET_XBUTTON_WPARAM, GWL_WNDPROC, VK_BACK, VK_CONTROL, VK_DELETE, VK_DOWN, VK_END,
-        VK_ESCAPE, VK_HOME, VK_LEFT, VK_MENU, VK_NEXT, VK_PRIOR, VK_RETURN, VK_RIGHT, VK_SHIFT,
-        VK_SPACE, VK_TAB, VK_UP, WHEEL_DELTA, WM_CHAR, WM_KEYDOWN, WM_KEYUP, WM_LBUTTONDBLCLK,
-        WM_LBUTTONDOWN, WM_LBUTTONUP, WM_MBUTTONDBLCLK, WM_MBUTTONDOWN, WM_MBUTTONUP,
-        WM_MOUSEHWHEEL, WM_MOUSEMOVE, WM_MOUSEWHEEL, WM_RBUTTONDBLCLK, WM_RBUTTONDOWN,
-        WM_RBUTTONUP, WM_SYSKEYDOWN, WM_SYSKEYUP, WM_XBUTTONDBLCLK, WM_XBUTTONDOWN, WM_XBUTTONUP,
-        WNDPROC, XBUTTON1, XBUTTON2,
+        CallWindowProcW, DefWindowProcW, GetKeyState, SetWindowLongA, GET_WHEEL_DELTA_WPARAM, GET_XBUTTON_WPARAM, GWL_WNDPROC, VK_BACK,
+        VK_CONTROL, VK_DELETE, VK_DOWN, VK_END, VK_ESCAPE, VK_HOME, VK_LEFT, VK_MENU, VK_NEXT, VK_PRIOR, VK_RETURN, VK_RIGHT, VK_SHIFT,
+        VK_SPACE, VK_TAB, VK_UP, WHEEL_DELTA, WM_CHAR, WM_KEYDOWN, WM_KEYUP, WM_LBUTTONDBLCLK, WM_LBUTTONDOWN, WM_LBUTTONUP,
+        WM_MBUTTONDBLCLK, WM_MBUTTONDOWN, WM_MBUTTONUP, WM_MOUSEHWHEEL, WM_MOUSEMOVE, WM_MOUSEWHEEL, WM_RBUTTONDBLCLK, WM_RBUTTONDOWN,
+        WM_RBUTTONUP, WM_SYSKEYDOWN, WM_SYSKEYUP, WM_XBUTTONDBLCLK, WM_XBUTTONDOWN, WM_XBUTTONUP, WNDPROC, XBUTTON1, XBUTTON2,
     },
 };
 
@@ -39,29 +36,20 @@ impl InputManager {
     #[inline]
     pub unsafe fn new(imgui: &mut Context, hwnd: HWND) -> Result<InputManager, &'static str> {
         if ORIGINAL_WNDPROC.load().is_none() {
-            ORIGINAL_WNDPROC.store(Some(
-                core::mem::transmute::<_, winapi::um::winuser::WNDPROC>(set_wndproc(
-                    Some(wndproc),
-                    hwnd,
-                )),
-            ));
+            ORIGINAL_WNDPROC.store(Some(core::mem::transmute::<_, winapi::um::winuser::WNDPROC>(set_wndproc(
+                Some(wndproc),
+                hwnd,
+            ))));
 
             configure(imgui);
             Ok(InputManager { hwnd })
         } else {
-            Err(
-                "WndProc is already hooked once, Drop that hook before trying to hook WndProc again."
-            )
+            Err("WndProc is already hooked once, Drop that hook before trying to hook WndProc again.")
         }
     }
 }
 
-unsafe extern "system" fn wndproc(
-    hwnd: HWND,
-    msg: u32,
-    w_param: WPARAM,
-    l_param: LPARAM,
-) -> LRESULT {
+unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, w_param: WPARAM, l_param: LPARAM) -> LRESULT {
     let io = &mut *imgui::sys::igGetIO();
 
     let mut mouse_event: bool = true;
@@ -74,7 +62,7 @@ unsafe extern "system" fn wndproc(
         WM_XBUTTONDOWN | WM_XBUTTONDBLCLK => match GET_XBUTTON_WPARAM(w_param) {
             XBUTTON1 => io.MouseDown[3] = true,
             XBUTTON2 => io.MouseDown[4] = true,
-            _ => {},
+            _ => {}
         },
         WM_LBUTTONUP => io.MouseDown[0] = false,
         WM_RBUTTONUP => io.MouseDown[1] = false,
@@ -82,17 +70,13 @@ unsafe extern "system" fn wndproc(
         WM_XBUTTONUP => match GET_XBUTTON_WPARAM(w_param) {
             XBUTTON1 => io.MouseDown[3] = false,
             XBUTTON2 => io.MouseDown[4] = false,
-            _ => {},
+            _ => {}
         },
-        WM_MOUSEWHEEL => {
-            io.MouseWheel = f32::from(GET_WHEEL_DELTA_WPARAM(w_param)) / f32::from(WHEEL_DELTA)
-        },
-        WM_MOUSEHWHEEL => {
-            io.MouseWheelH = f32::from(GET_WHEEL_DELTA_WPARAM(w_param)) / f32::from(WHEEL_DELTA)
-        },
+        WM_MOUSEWHEEL => io.MouseWheel = f32::from(GET_WHEEL_DELTA_WPARAM(w_param)) / f32::from(WHEEL_DELTA),
+        WM_MOUSEHWHEEL => io.MouseWheelH = f32::from(GET_WHEEL_DELTA_WPARAM(w_param)) / f32::from(WHEEL_DELTA),
         WM_MOUSEMOVE => {
             io.MousePos = (GET_X_LPARAM(l_param) as f32, GET_Y_LPARAM(l_param) as f32).into();
-        },
+        }
         _ => mouse_event = false,
     }
 

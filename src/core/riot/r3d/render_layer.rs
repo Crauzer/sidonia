@@ -1,20 +1,20 @@
-use winapi::shared::windef::HWND;
-use crate::core::riot::x3d::main::X3dIMain;
-use crate::core::riot::x3d::device::X3dIDevice;
-use crate::core::riot::x3d::surface::X3dISurface;
-use crate::core::riot::r3d::screen_buffer::R3dScreenBuffer;
-use crate::core::riot::x3d::present_parameters::X3dPresentParameters;
+use crate::core::riot::{
+    r3d::{
+        color::R3dColor, matrix44::R3dMatrix44, plane::R3dPlane, screen_buffer::R3dScreenBuffer, texture::R3dTexture, vector3::R3dVector3,
+    },
+    x3d::{
+        caps::X3dCaps,
+        d3d9::{device::X3dD3d9Device, main::X3dD3d9Main},
+        device::X3dIDevice,
+        device_type::X3dDeviceType,
+        format::X3dFormat,
+        main::X3dIMain,
+        present_parameters::X3dPresentParameters,
+        surface::X3dISurface,
+    },
+};
 use num_derive::{FromPrimitive, ToPrimitive};
-use crate::core::riot::x3d::caps::X3dCaps;
-use crate::core::riot::r3d::vector3::{R3dVector3};
-use crate::core::riot::r3d::matrix44::R3dMatrix44;
-use crate::core::riot::r3d::plane::R3dPlane;
-use crate::core::riot::x3d::device_type::X3dDeviceType;
-use crate::core::riot::x3d::d3d9::main::X3dD3d9Main;
-use crate::core::riot::r3d::texture::R3dTexture;
-use crate::core::riot::x3d::format::X3dFormat;
-use crate::core::riot::r3d::color::R3dColor;
-use crate::core::riot::x3d::d3d9::device::X3dD3d9Device;
+use winapi::shared::windef::HWND;
 
 #[repr(C)]
 #[derive(Debug)]
@@ -61,7 +61,7 @@ pub struct R3dRenderLayer {
     ambient_color: R3dColor,
     back_clear_color: R3dColor,
     stats: R3dRenderLayerStats,
-    error: R3dRenderLayerError
+    error: R3dRenderLayerError,
 }
 
 #[repr(C)]
@@ -75,7 +75,7 @@ pub struct R3dRenderLayerStats {
     texture_changes_count: i32,
     triangles_rendered_count: i32,
     average_strip_length: i32,
-    draw_count: i32
+    draw_count: i32,
 }
 
 #[repr(u32)]
@@ -83,14 +83,14 @@ pub struct R3dRenderLayerStats {
 pub enum R3dRenderLayerError {
     None = 0,
     NoShader2 = 1,
-    FailedToCreateDevice = 2
+    FailedToCreateDevice = 2,
 }
 
 #[repr(u32)]
 #[derive(FromPrimitive, ToPrimitive, Debug)]
 pub enum R3dEndOfFrameBehavior {
     None = 0,
-    Flush = 1
+    Flush = 1,
 }
 
 impl R3dRenderLayer {
@@ -99,8 +99,6 @@ impl R3dRenderLayer {
     }
 
     pub fn d3d9_main_mut(&mut self) -> Option<&'static mut X3dD3d9Main> {
-        unsafe {
-            self.r3d_main.as_mut::<'static>()
-        }
+        unsafe { self.r3d_main.as_mut::<'static>() }
     }
 }

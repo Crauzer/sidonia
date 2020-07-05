@@ -1,10 +1,9 @@
-use crate::core::riot::r3d::render_layer::R3dRenderLayer;
-use winapi::shared::minwindef::LPVOID;
-use crate::core::utilities::memory;
-use crate::core::utilities::message_box::show_message;
+use crate::core::{
+    riot::{game_clock::RiotGameClock, r3d::render_layer::R3dRenderLayer, render_pipeline::RiotRenderPipeline},
+    utilities::{memory, message_box::show_message},
+};
 use std::ptr;
-use crate::core::riot::render_pipeline::RiotRenderPipeline;
-use crate::core::riot::game_clock::RiotGameClock;
+use winapi::shared::minwindef::LPVOID;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -13,7 +12,7 @@ pub enum GameState {
     Spawn = 1,
     GameLoop = 2,
     EndGame = 3,
-    PreExit = 4
+    PreExit = 4,
 }
 
 #[derive(Copy, Clone)]
@@ -22,7 +21,6 @@ pub struct Game {
     game_clock: *mut RiotGameClock,
     render_pipeline: *mut RiotRenderPipeline,
     renderer: *mut R3dRenderLayer,
-
 }
 
 impl Game {
@@ -47,14 +45,10 @@ impl Game {
     }
 
     pub fn game_clock(&self) -> Option<&'static RiotGameClock> {
-        unsafe {
-            self.game_clock.as_ref::<'static>()
-        }
+        unsafe { self.game_clock.as_ref::<'static>() }
     }
     pub fn renderer_mut(&mut self) -> Option<&'static mut R3dRenderLayer> {
-        unsafe {
-            self.renderer.as_mut::<'static>()
-        }
+        unsafe { self.renderer.as_mut::<'static>() }
     }
 
     pub fn is_renderer_initialized(&self) -> bool {
@@ -73,9 +67,7 @@ impl Game {
         if new_game_state != self.game_state {
             log::info!("Switching to GameState: {:#?}", new_game_state);
 
-            if new_game_state == GameState::GameLoop {
-
-            }
+            if new_game_state == GameState::GameLoop {}
 
             self.game_state = new_game_state;
         }

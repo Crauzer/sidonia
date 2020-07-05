@@ -1,1 +1,1 @@
-pub trait X3dIMain { }
+pub trait X3dIMain {}

@@ -1,8 +1,8 @@
+use crate::core::riot::{
+    metric_stats_bucker_generator::RiotMetricStatsBucketGenerator, metric_stats_generator::RiotMetricStatsGenerator,
+    metrics_details::RiotMetricsDetails, r3d::screen_buffer::R3dScreenBuffer,
+};
 use winapi::shared::minwindef::LPVOID;
-use crate::core::riot::r3d::screen_buffer::R3dScreenBuffer;
-use crate::core::riot::metric_stats_generator::RiotMetricStatsGenerator;
-use crate::core::riot::metric_stats_bucker_generator::RiotMetricStatsBucketGenerator;
-use crate::core::riot::metrics_details::RiotMetricsDetails;
 
 #[repr(C)]
 pub struct RiotRenderPipeline {
@@ -13,5 +13,5 @@ pub struct RiotRenderPipeline {
     framerate_metrics: RiotMetricStatsGenerator,
     framerate_buckets: RiotMetricStatsBucketGenerator,
     metrics: RiotMetricsDetails,
-    active_metrics: *mut RiotMetricsDetails
+    active_metrics: *mut RiotMetricsDetails,
 }

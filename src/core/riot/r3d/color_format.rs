@@ -14,6 +14,6 @@ pub struct R3dColorFormat {
     b_pos: u32,
     color_mask: u32,
     rgb_mask: u32,
-    make_color_fn: extern "cdecl" fn (i32, i32, i32, i32) -> u32,
-    split_color_fn: extern "cdecl" fn (u32, *mut i32, *mut i32, *mut i32, *mut i32)
+    make_color_fn: extern "cdecl" fn(i32, i32, i32, i32) -> u32,
+    split_color_fn: extern "cdecl" fn(u32, *mut i32, *mut i32, *mut i32, *mut i32),
 }

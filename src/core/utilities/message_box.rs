@@ -1,6 +1,5 @@
+use std::{ffi::CString, ptr};
 use winapi::um::winuser::{MessageBoxA, MB_ICONINFORMATION, MB_OK};
-use std::ptr;
-use std::ffi::CString;
 
 pub fn show_message(message: &str) {
     unsafe {
