@@ -100,6 +100,15 @@ impl R3dRenderLayer {
     pub fn d3d9_main_mut(&mut self) -> Option<&'static mut X3dD3d9Main> {
         unsafe { self.r3d_main.as_mut::<'static>() }
     }
+    pub fn camera_position(&self) -> R3dVector3 {
+        self.camera_position
+    }
+    pub fn camera_near_clip(&self) -> f32 {
+        self.near_clip
+    }
+    pub fn camera_far_clip(&self) -> f32 {
+        self.far_clip
+    }
     pub fn stats(&self) -> &R3dRenderLayerStats {
         &self.stats
     }
