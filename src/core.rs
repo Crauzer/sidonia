@@ -78,6 +78,7 @@ impl Core {
     fn update_ui(&mut self, d3d9_device: &mut X3dD3d9Device) {
         let game = &mut self.game;
         self.ui.update(game, d3d9_device);
+        self.ui.render();
     }
 
     fn end_scene(device: *mut X3dD3d9Device) {

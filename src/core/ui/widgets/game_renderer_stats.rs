@@ -1,7 +1,6 @@
+use crate::core::{riot::r3d::render_layer::R3dRenderLayerStats, ui::widgets::Widget};
 use arraydeque::{ArrayDeque, Wrapping};
-use crate::core::ui::widgets::Widget;
 use imgui::Ui;
-use crate::core::riot::r3d::render_layer::R3dRenderLayerStats;
 
 pub struct GameRendererStatsWidget {
     texture_memory_values: ArrayDeque<[f32; 100], Wrapping>,
@@ -37,7 +36,8 @@ impl GameRendererStatsWidget {
         self.material_change_count_values.push_back(stats.material_change_count() as f32);
         self.mode_changes_count_values.push_back(stats.mode_changes_count() as f32);
         self.texture_changes_count_values.push_back(stats.texture_changes_count() as f32);
-        self.triangles_rendered_count_values.push_back(stats.triangles_rendered_count() as f32);
+        self.triangles_rendered_count_values
+            .push_back(stats.triangles_rendered_count() as f32);
         self.average_strip_length_values.push_back(stats.average_strip_length() as f32);
         self.draw_count_values.push_back(stats.draw_count() as f32);
     }
@@ -45,18 +45,6 @@ impl GameRendererStatsWidget {
 
 impl Widget for GameRendererStatsWidget {
     fn render<'ui>(&mut self, ui: &'ui imgui::Ui) {
-
-
-       //let texture_memory_values: [f32; 100] = self.texture_memory_values.into();
-       //let buffer_memory_values = self.buffer_memory_values.into();
-       //let screen_buffer_memory_values = self.screen_buffer_memory_values.into();
-       //let material_change_count_values = self.material_change_count_values.into();
-       //let mode_changes_count_values = self.mode_changes_count_values.into();
-       //let texture_changes_count_values = self.texture_changes_count_values.into();
-       //let triangles_rendered_count_values = self.triangles_rendered_count_values.into();
-       //let average_strip_length_values = self.average_strip_length_values.into();
-       //let draw_count_values = self.draw_count_values.into();
-
         ui.plot_histogram(im_str!("Texture Memoey"), self.texture_memory_values.as_slices().0)
             .scale_min(0.0)
             .scale_max(1073741824.0 / 2.0)
@@ -105,7 +93,7 @@ impl Widget for GameRendererStatsWidget {
             .graph_size([150.0, 30.0])
             .build();
 
-        ui.plot_lines(im_str!("Draws"), self.draw_count_values.as_slices().0)
+        ui.plot_histogram(im_str!("Draws"), self.draw_count_values.as_slices().0)
             .scale_min(0.0)
             .scale_max(10000.0)
             .graph_size([150.0, 30.0])

@@ -1,11 +1,16 @@
-use crate::core::{game::Game, riot::x3d::d3d9::device::X3dD3d9Device, ui::input_manager::InputManager};
+use crate::core::{
+    game::Game,
+    riot::x3d::d3d9::device::X3dD3d9Device,
+    ui::{
+        input_manager::InputManager,
+        widgets::{game_renderer::GameRendererWidget, Widget},
+    },
+};
 use std::{mem::MaybeUninit, ptr::NonNull};
 use winapi::{
     shared::{d3d9types::D3DDEVICE_CREATION_PARAMETERS, windef::RECT},
     um::winuser::GetClientRect,
 };
-use crate::core::ui::widgets::game_renderer_stats::GameRendererStatsWidget;
-use crate::core::ui::widgets::Widget;
 
 pub mod input_manager;
 pub mod widgets;
@@ -15,7 +20,7 @@ pub struct Ui {
     imgui_renderer: Option<imgui_dx9_renderer::Renderer>,
     input_manager: Option<InputManager>,
 
-    game_renderer_stats: GameRendererStatsWidget,
+    game_renderer: GameRendererWidget,
 }
 
 impl Ui {
@@ -25,7 +30,7 @@ impl Ui {
             imgui_renderer: None,
             input_manager: None,
 
-            game_renderer_stats: GameRendererStatsWidget::new()
+            game_renderer: GameRendererWidget::new(),
         }
     }
 
@@ -81,66 +86,34 @@ impl Ui {
             (true, false) => {
                 self.initialize_imgui(d3d9_device);
             }
-            // Both the Game renderer and our renderer are initialized, do draw
+            // Both the Game renderer and our renderer are initialized, do update
             (true, true) => {
-                let ui_frame = self.imgui_context.frame();
-
-                imgui::Window::new(im_str!("Sidonia"))
-                    .size([300.0, 300.0], imgui::Condition::FirstUseEver)
-                    .build(&ui_frame, || {
-                        ui_frame.text(im_str!("EndScene Hook"));
-                        ui_frame.separator();
-                        let mouse_pos = ui_frame.io().mouse_pos;
-                        ui_frame.text(format!("Mouse Position: ({:.1},{:.1})", mouse_pos[0], mouse_pos[1]));
-                    });
-
-                if let Some(game_clock) = game.game_clock() {
-                    imgui::Window::new(im_str!("gGameClock"))
-                        .size([150.0, 180.0], imgui::Condition::FirstUseEver)
-                        .build(&ui_frame, || {
-                            ui_frame.text(format!("Is Initialized: {}", game_clock.is_initialized()));
-                            ui_frame.separator();
-                            ui_frame.text(format!("Current Time: {:.3}", game_clock.current_time()));
-                            ui_frame.text(format!("Time Delta: {:.5}", game_clock.time_delta()));
-                        });
-                }
-
-
-                let game_renderer_stats = &mut self.game_renderer_stats;
                 if let Some(game_renderer) = game.renderer_mut() {
-                    imgui::Window::new(im_str!("gRenderer"))
-                        .size([150.0, 300.0], imgui::Condition::Appearing)
-                        .build(&ui_frame, || {
-                            ui_frame.text(format!("Is Initialized: {}", game_renderer.is_initialized()));
-                            ui_frame.separator();
-                            ui_frame.spacing();
-
-                            if imgui::CollapsingHeader::new(im_str!("Stats"))
-                                .default_open(true)
-                                .build(&ui_frame)
-                            {
-                                let stats = game_renderer.stats();
-
-                                game_renderer_stats.update(stats);
-                                game_renderer_stats.render(&ui_frame);
-
-                                //ui_frame.text(format!("Texture       Memory: {}", stats.texture_memory()));
-                                //ui_frame.text(format!("Buffer        Memory: {}", stats.buffer_memory()));
-                                //ui_frame.text(format!("Screen Buffer Memory: {}", stats.texture_memory()));
-                                //ui_frame.text(format!("Material Change Count: {}", stats.material_change_count()));
-                                //ui_frame.text(format!("Mode Changes    Count: {}", stats.mode_changes_count()));
-                                //ui_frame.text(format!("Texture Changes Count: {}", stats.texture_changes_count()));
-                                //ui_frame.text(format!("Tris Rendered   Count: {}", stats.triangles_rendered_count()));
-                                //ui_frame.text(format!("Average Strip Length: {}", stats.average_strip_length()));
-                                //ui_frame.text(format!("Draw Count: {}", stats.draw_count()));
-                            }
-                        });
+                    self.game_renderer.update(game_renderer);
                 }
-
-                let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
-                imgui_renderer.render(ui_frame.render()).expect("Failed to render UI");
             }
             _ => {}
+        }
+    }
+
+    pub fn render(&mut self) {
+        if self.is_imgui_initialized() {
+            let ui = self.imgui_context.frame();
+
+            // Main window
+            imgui::Window::new(im_str!("Sidonia"))
+                .size([300.0, 300.0], imgui::Condition::FirstUseEver)
+                .build(&ui, || {
+                    ui.text(im_str!("EndScene Hook"));
+                    ui.separator();
+                    let mouse_pos = ui.io().mouse_pos;
+                    ui.text(format!("Mouse Position: ({:.1},{:.1})", mouse_pos[0], mouse_pos[1]));
+                });
+
+            self.game_renderer.render(&ui);
+
+            let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
+            imgui_renderer.render(ui.render()).expect("Failed to render UI");
         }
     }
 }

@@ -1,3 +1,4 @@
+pub mod game_renderer;
 pub mod game_renderer_stats;
 
 pub trait Widget {

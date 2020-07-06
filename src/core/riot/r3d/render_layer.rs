@@ -100,17 +100,37 @@ impl R3dRenderLayer {
     pub fn d3d9_main_mut(&mut self) -> Option<&'static mut X3dD3d9Main> {
         unsafe { self.r3d_main.as_mut::<'static>() }
     }
-    pub fn stats(&self) -> &R3dRenderLayerStats { &self.stats }
+    pub fn stats(&self) -> &R3dRenderLayerStats {
+        &self.stats
+    }
 }
 
 impl R3dRenderLayerStats {
-    pub fn texture_memory(&self) -> i32 { self.texture_memory }
-    pub fn buffer_memory(&self) -> i32 { self.buffer_memory }
-    pub fn screen_buffer_memory(&self) -> i32 { self.screen_buffer_memory }
-    pub fn material_change_count(&self) -> i32 { self.material_change_count }
-    pub fn mode_changes_count(&self) -> i32 { self.mode_changes_count }
-    pub fn texture_changes_count(&self) -> i32 { self.texture_changes_count }
-    pub fn triangles_rendered_count(&self) -> i32 { self.triangles_rendered_count }
-    pub fn average_strip_length(&self) -> i32 { self.triangles_rendered_count }
-    pub fn draw_count(&self) -> i32 { self.triangles_rendered_count }
+    pub fn texture_memory(&self) -> i32 {
+        self.texture_memory
+    }
+    pub fn buffer_memory(&self) -> i32 {
+        self.buffer_memory
+    }
+    pub fn screen_buffer_memory(&self) -> i32 {
+        self.screen_buffer_memory
+    }
+    pub fn material_change_count(&self) -> i32 {
+        self.material_change_count
+    }
+    pub fn mode_changes_count(&self) -> i32 {
+        self.mode_changes_count
+    }
+    pub fn texture_changes_count(&self) -> i32 {
+        self.texture_changes_count
+    }
+    pub fn triangles_rendered_count(&self) -> i32 {
+        self.triangles_rendered_count
+    }
+    pub fn average_strip_length(&self) -> i32 {
+        self.triangles_rendered_count
+    }
+    pub fn draw_count(&self) -> i32 {
+        self.triangles_rendered_count
+    }
 }

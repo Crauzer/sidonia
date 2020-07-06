@@ -5,6 +5,7 @@ pub mod metric_stats_generator;
 pub mod metrics;
 pub mod metrics_details;
 pub mod mutex;
+pub mod net;
 pub mod r3d;
 pub mod render_pipeline;
 pub mod x3d;
