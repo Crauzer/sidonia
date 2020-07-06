@@ -4,13 +4,18 @@ use winapi::{
     shared::{d3d9types::D3DDEVICE_CREATION_PARAMETERS, windef::RECT},
     um::winuser::GetClientRect,
 };
+use crate::core::ui::widgets::game_renderer_stats::GameRendererStatsWidget;
+use crate::core::ui::widgets::Widget;
 
 pub mod input_manager;
+pub mod widgets;
 
 pub struct Ui {
     imgui_context: imgui::Context,
     imgui_renderer: Option<imgui_dx9_renderer::Renderer>,
     input_manager: Option<InputManager>,
+
+    game_renderer_stats: GameRendererStatsWidget,
 }
 
 impl Ui {
@@ -19,6 +24,8 @@ impl Ui {
             imgui_context: imgui::Context::create(),
             imgui_renderer: None,
             input_manager: None,
+
+            game_renderer_stats: GameRendererStatsWidget::new()
         }
     }
 
@@ -64,14 +71,18 @@ impl Ui {
         self.input_manager = None;
     }
 
+    pub fn is_imgui_initialized(&self) -> bool {
+        self.imgui_renderer.is_some() && self.input_manager.is_some()
+    }
+
     pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {
-        match (game.is_renderer_initialized(), self.imgui_renderer.as_mut()) {
+        match (game.is_renderer_initialized(), self.is_imgui_initialized()) {
             // Game renderer is initialized so we also initialize our UI renderer
-            (true, None) => {
+            (true, false) => {
                 self.initialize_imgui(d3d9_device);
             }
             // Both the Game renderer and our renderer are initialized, do draw
-            (true, Some(imgui_renderer)) => {
+            (true, true) => {
                 let ui_frame = self.imgui_context.frame();
 
                 imgui::Window::new(im_str!("Sidonia"))
@@ -94,6 +105,8 @@ impl Ui {
                         });
                 }
 
+
+                let game_renderer_stats = &mut self.game_renderer_stats;
                 if let Some(game_renderer) = game.renderer_mut() {
                     imgui::Window::new(im_str!("gRenderer"))
                         .size([150.0, 300.0], imgui::Condition::Appearing)
@@ -108,19 +121,23 @@ impl Ui {
                             {
                                 let stats = game_renderer.stats();
 
-                                ui_frame.text(format!("Texture       Memory: {}", stats.texture_memory()));
-                                ui_frame.text(format!("Buffer        Memory: {}", stats.buffer_memory()));
-                                ui_frame.text(format!("Screen Buffer Memory: {}", stats.texture_memory()));
-                                ui_frame.text(format!("Material Change Count: {}", stats.material_change_count()));
-                                ui_frame.text(format!("Mode Changes    Count: {}", stats.mode_changes_count()));
-                                ui_frame.text(format!("Texture Changes Count: {}", stats.texture_changes_count()));
-                                ui_frame.text(format!("Tris Rendered   Count: {}", stats.triangles_rendered_count()));
-                                ui_frame.text(format!("Average Strip Length: {}", stats.average_strip_length()));
-                                ui_frame.text(format!("Draw Count: {}", stats.draw_count()));
+                                game_renderer_stats.update(stats);
+                                game_renderer_stats.render(&ui_frame);
+
+                                //ui_frame.text(format!("Texture       Memory: {}", stats.texture_memory()));
+                                //ui_frame.text(format!("Buffer        Memory: {}", stats.buffer_memory()));
+                                //ui_frame.text(format!("Screen Buffer Memory: {}", stats.texture_memory()));
+                                //ui_frame.text(format!("Material Change Count: {}", stats.material_change_count()));
+                                //ui_frame.text(format!("Mode Changes    Count: {}", stats.mode_changes_count()));
+                                //ui_frame.text(format!("Texture Changes Count: {}", stats.texture_changes_count()));
+                                //ui_frame.text(format!("Tris Rendered   Count: {}", stats.triangles_rendered_count()));
+                                //ui_frame.text(format!("Average Strip Length: {}", stats.average_strip_length()));
+                                //ui_frame.text(format!("Draw Count: {}", stats.draw_count()));
                             }
                         });
                 }
 
+                let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
                 imgui_renderer.render(ui_frame.render()).expect("Failed to render UI");
             }
             _ => {}
