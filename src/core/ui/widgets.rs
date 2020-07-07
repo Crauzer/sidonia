@@ -1,5 +1,6 @@
 pub mod camera;
 pub mod camera_attributes;
+pub mod camera_zoom;
 pub mod game_renderer;
 pub mod game_renderer_camera;
 pub mod game_renderer_stats;

@@ -158,12 +158,12 @@ pub enum RiotCameraLogicAccelerationState {
 #[repr(C)]
 #[derive(Debug)]
 pub struct RiotCameraLogicZoom {
-    zoom_ease_time: f32,
-    zoom_min_speed: f32,
-    scale: f32,
-    velocity: f32,
-    current: f32,
-    desired: f32,
+    pub zoom_ease_time: f32,
+    pub zoom_min_speed: f32,
+    pub scale: f32,
+    pub velocity: f32,
+    pub current: f32,
+    pub desired: f32,
 }
 
 #[repr(u32)]
@@ -184,6 +184,12 @@ impl RiotCameraLogic {
     }
     pub fn attributes_mut(&mut self) -> &mut RiotCameraLogicAttributes {
         &mut self.attributes
+    }
+    pub fn zoom(&self) -> &RiotCameraLogicZoom {
+        &self.zoom
+    }
+    pub fn zoom_mut(&mut self) -> &mut RiotCameraLogicZoom {
+        &mut self.zoom
     }
 
     pub fn set_mode(&mut self, mode: RiotCameraLogicMode) {
