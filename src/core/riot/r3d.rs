@@ -1,4 +1,5 @@
 pub mod asset_category;
+pub mod camera;
 pub mod color;
 pub mod color_format;
 pub mod matrix44;

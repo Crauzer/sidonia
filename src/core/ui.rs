@@ -3,7 +3,7 @@ use crate::core::{
     riot::x3d::d3d9::device::X3dD3d9Device,
     ui::{
         input_manager::InputManager,
-        widgets::{game_renderer::GameRendererWidget, Widget},
+        widgets::{camera::CameraWidget, game_renderer::GameRendererWidget, Widget},
     },
 };
 use std::{mem::MaybeUninit, ptr::NonNull};
@@ -21,6 +21,7 @@ pub struct Ui {
     input_manager: Option<InputManager>,
 
     game_renderer: GameRendererWidget,
+    camera: CameraWidget,
 }
 
 impl Ui {
@@ -31,6 +32,7 @@ impl Ui {
             input_manager: None,
 
             game_renderer: GameRendererWidget::new(),
+            camera: CameraWidget::new(),
         }
     }
 
@@ -84,6 +86,11 @@ impl Ui {
         if let Some(game_renderer) = game.renderer_mut() {
             self.game_renderer.fetch_data(game_renderer);
         }
+        if let Some(hud_manager) = game.hud_manager_mut() {
+            if let Some(camera_logic) = hud_manager.camera_logic_mut() {
+                self.camera.fetch_data(camera_logic);
+            }
+        }
     }
 
     pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {
@@ -96,6 +103,11 @@ impl Ui {
             (true, true) => {
                 if let Some(game_renderer) = game.renderer_mut() {
                     self.game_renderer.update(game_renderer);
+                }
+                if let Some(hud_manager) = game.hud_manager_mut() {
+                    if let Some(camera_logic) = hud_manager.camera_logic_mut() {
+                        self.camera.update(camera_logic);
+                    }
                 }
             }
             _ => {}
@@ -117,6 +129,7 @@ impl Ui {
                 });
 
             self.game_renderer.render(&ui);
+            self.camera.render(&ui);
 
             let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
             imgui_renderer.render(ui.render()).expect("Failed to render UI");

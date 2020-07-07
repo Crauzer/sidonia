@@ -1,4 +1,6 @@
 use crate::core::{msvc::vector::StdVector, riot::r3d::vector3::R3dVector3};
+use imgui::ImStr;
+use num_derive::{FromPrimitive, ToPrimitive};
 
 #[repr(C)]
 #[derive(Debug)]
@@ -101,15 +103,15 @@ pub enum RiotFollowSplineCameraClientInerpolationMode {
 #[repr(C)]
 #[derive(Debug)]
 pub struct RiotCameraLogicAttributes {
-    world_position: R3dVector3,
-    camera_freeze_point: R3dVector3,
-    current_velocity: f32,
-    current_pitch: f32,
-    current_yaw: f32,
-    start_yaw: f32,
-    start_pitch: f32,
-    current_fov: f32,
-    last_click_map_time: f32,
+    pub world_position: R3dVector3,
+    pub camera_freeze_point: R3dVector3,
+    pub current_velocity: f32,
+    pub current_pitch: f32,
+    pub current_yaw: f32,
+    pub start_yaw: f32,
+    pub start_pitch: f32,
+    pub current_fov: f32,
+    pub last_click_map_time: f32,
 }
 
 #[repr(C)]
@@ -165,10 +167,26 @@ pub struct RiotCameraLogicZoom {
 }
 
 #[repr(u32)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive)]
 pub enum RiotCameraLogicMode {
     Topdown = 0,
     FPS = 1,
     TPS = 2,
     Focus = 3,
+}
+
+impl RiotCameraLogic {
+    pub fn mode(&self) -> RiotCameraLogicMode {
+        self.mode
+    }
+    pub fn attributes(&self) -> &RiotCameraLogicAttributes {
+        &self.attributes
+    }
+    pub fn attributes_mut(&mut self) -> &mut RiotCameraLogicAttributes {
+        &mut self.attributes
+    }
+
+    pub fn set_mode(&mut self, mode: RiotCameraLogicMode) {
+        self.mode = mode;
+    }
 }

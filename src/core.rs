@@ -1,12 +1,15 @@
 use crate::{
     core::{
         game::{Game, GameState},
-        riot::x3d::d3d9::device::X3dD3d9Device,
+        riot::{camera_logic::RiotCameraLogicMode, x3d::d3d9::device::X3dD3d9Device},
         ui::Ui,
     },
     CORE,
 };
-use winapi::shared::{d3d9::IDirect3DDevice9, d3d9types::D3DPRESENT_PARAMETERS};
+use winapi::{
+    _core::intrinsics::transmute,
+    shared::{d3d9::IDirect3DDevice9, d3d9types::D3DPRESENT_PARAMETERS},
+};
 
 pub mod d3d9;
 pub mod detours;
@@ -20,6 +23,7 @@ pub mod utilities;
 pub struct Core {
     game: Game,
     ui: Ui,
+    first_update_since_reset: bool,
 }
 
 #[derive(Debug)]
@@ -60,6 +64,7 @@ impl Core {
         Core {
             game: Game::new(),
             ui: Ui::new(),
+            first_update_since_reset: true,
         }
     }
 
@@ -70,9 +75,13 @@ impl Core {
     pub fn update(&mut self, d3d9_device: &mut X3dD3d9Device) -> CoreStatus {
         let status = CoreStatus::from(self.game.update());
 
-        //log::info!("{:#?}", self.game.hud_manager_mut().unwrap().camera_logic_mut().unwrap());
+        //self.game.hud_manager_mut().unwrap().camera_logic_mut().unwrap().set_mode(RiotCameraLogicMode::TPS);
+
+        //log::info!("{:#?}", );
 
         self.update_ui(d3d9_device);
+
+        self.first_update_since_reset = false;
 
         status
     }
@@ -81,8 +90,16 @@ impl Core {
         let game = &mut self.game;
 
         self.ui.update(game, d3d9_device);
-        self.ui.fetch_data(game);
         self.ui.render();
+        if !self.first_update_since_reset {
+            self.ui.fetch_data(game);
+        }
+    }
+
+    pub fn reset(&mut self) {
+        self.ui.reset();
+
+        self.first_update_since_reset = true;
     }
 
     fn end_scene(device: *mut X3dD3d9Device) {
