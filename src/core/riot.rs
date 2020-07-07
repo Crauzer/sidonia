@@ -1,4 +1,6 @@
+pub mod camera_logic;
 pub mod game_clock;
+pub mod hud_manager;
 pub mod logger;
 pub mod metric_stats_bucker_generator;
 pub mod metric_stats_generator;

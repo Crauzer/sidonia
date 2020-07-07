@@ -1,5 +1,7 @@
 use crate::core::{
-    riot::{game_clock::RiotGameClock, r3d::render_layer::R3dRenderLayer, render_pipeline::RiotRenderPipeline},
+    riot::{
+        game_clock::RiotGameClock, hud_manager::RiotHudManager, r3d::render_layer::R3dRenderLayer, render_pipeline::RiotRenderPipeline,
+    },
     utilities::memory,
 };
 
@@ -19,6 +21,7 @@ pub struct Game {
     game_clock: *mut RiotGameClock,
     render_pipeline: *mut RiotRenderPipeline,
     renderer: *mut R3dRenderLayer,
+    hud_manager: *mut RiotHudManager,
 }
 
 impl Game {
@@ -31,12 +34,14 @@ impl Game {
         let render_pipeline = Game::fetch_render_pipeline();
         let renderer = Game::fetch_renderer();
         let game_clock = Game::fetch_game_clock();
+        let hud_manager = Game::fetch_hud_manager();
 
         Game {
             game_state,
             game_clock,
             render_pipeline,
             renderer,
+            hud_manager,
         }
     }
 
@@ -45,6 +50,9 @@ impl Game {
     }
     pub fn renderer_mut(&mut self) -> Option<&'static mut R3dRenderLayer> {
         unsafe { self.renderer.as_mut::<'static>() }
+    }
+    pub fn hud_manager_mut(&mut self) -> Option<&'static mut RiotHudManager> {
+        unsafe { self.hud_manager.as_mut::<'static>() }
     }
 
     pub fn is_renderer_initialized(&self) -> bool {
@@ -96,6 +104,13 @@ impl Game {
             let render_layer_ptr = memory::convert_file_offset_to_ptr(0x02D79078) as *mut *mut R3dRenderLayer;
 
             *render_layer_ptr
+        }
+    }
+    fn fetch_hud_manager() -> *mut RiotHudManager {
+        unsafe {
+            let ptr = memory::convert_file_offset_to_ptr(0x02D78D24) as *mut *mut RiotHudManager;
+
+            *ptr
         }
     }
 }

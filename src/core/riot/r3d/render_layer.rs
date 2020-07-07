@@ -103,6 +103,9 @@ impl R3dRenderLayer {
     pub fn camera_position(&self) -> R3dVector3 {
         self.camera_position
     }
+    pub fn camera_matrix(&self) -> R3dMatrix44 {
+        self.camera_matrix
+    }
     pub fn camera_near_clip(&self) -> f32 {
         self.near_clip
     }
@@ -111,6 +114,16 @@ impl R3dRenderLayer {
     }
     pub fn stats(&self) -> &R3dRenderLayerStats {
         &self.stats
+    }
+
+    pub fn set_camera_position(&mut self, position: R3dVector3) {
+        self.camera_position = position;
+    }
+    pub fn set_near_clip(&mut self, near_clip: f32) {
+        self.near_clip = near_clip;
+    }
+    pub fn set_far_clip(&mut self, far_clip: f32) {
+        self.far_clip = far_clip;
     }
 }
 

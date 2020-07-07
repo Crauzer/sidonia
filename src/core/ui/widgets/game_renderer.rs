@@ -17,6 +17,10 @@ impl GameRendererWidget {
         }
     }
 
+    pub fn fetch_data(&self, game_renderer: &mut R3dRenderLayer) {
+        self.camera_widget.fetch_data(game_renderer);
+    }
+
     pub fn update(&mut self, game_renderer: &R3dRenderLayer) {
         self.stats_widget.update(game_renderer.stats());
         self.camera_widget.update(game_renderer);

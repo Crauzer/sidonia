@@ -70,6 +70,8 @@ impl Core {
     pub fn update(&mut self, d3d9_device: &mut X3dD3d9Device) -> CoreStatus {
         let status = CoreStatus::from(self.game.update());
 
+        //log::info!("{:#?}", self.game.hud_manager_mut().unwrap().camera_logic_mut().unwrap());
+
         self.update_ui(d3d9_device);
 
         status
@@ -77,7 +79,9 @@ impl Core {
 
     fn update_ui(&mut self, d3d9_device: &mut X3dD3d9Device) {
         let game = &mut self.game;
+
         self.ui.update(game, d3d9_device);
+        self.ui.fetch_data(game);
         self.ui.render();
     }
 

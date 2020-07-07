@@ -11,3 +11,13 @@ impl Into<[f32; 3]> for R3dVector3 {
         [self.x, self.y, self.z]
     }
 }
+
+impl From<[f32; 3]> for R3dVector3 {
+    fn from(value: [f32; 3]) -> Self {
+        R3dVector3 {
+            x: value[0],
+            y: value[1],
+            z: value[2],
+        }
+    }
+}

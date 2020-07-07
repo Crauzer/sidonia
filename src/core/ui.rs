@@ -80,6 +80,12 @@ impl Ui {
         self.imgui_renderer.is_some() && self.input_manager.is_some()
     }
 
+    pub fn fetch_data(&self, game: &mut Game) {
+        if let Some(game_renderer) = game.renderer_mut() {
+            self.game_renderer.fetch_data(game_renderer);
+        }
+    }
+
     pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {
         match (game.is_renderer_initialized(), self.is_imgui_initialized()) {
             // Game renderer is initialized so we also initialize our UI renderer
