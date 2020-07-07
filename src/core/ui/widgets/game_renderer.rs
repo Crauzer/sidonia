@@ -31,6 +31,7 @@ impl Widget for GameRendererWidget {
     fn render<'ui>(&mut self, ui: &'ui Ui<'ui>) {
         imgui::Window::new(im_str!("gRenderer"))
             .size([200.0, 300.0], imgui::Condition::Appearing)
+            .always_auto_resize(true)
             .build(&ui, || {
                 ui.separator();
                 ui.spacing();
@@ -41,9 +42,9 @@ impl Widget for GameRendererWidget {
 
                 ui.separator();
 
-                if imgui::CollapsingHeader::new(im_str!("Camera")).default_open(false).build(&ui) {
-                    self.camera_widget.render(&ui);
-                }
+                //if imgui::CollapsingHeader::new(im_str!("Camera")).default_open(false).build(&ui) {
+                //    self.camera_widget.render(&ui);
+                //}
             });
     }
 }

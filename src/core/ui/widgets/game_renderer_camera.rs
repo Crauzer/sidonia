@@ -37,7 +37,7 @@ impl GameRendererCameraWidget {
         //self.position = game_renderer.camera_position().into();
 
         let camera_matrix: Mat4 = game_renderer.camera_matrix().into();
-        log::info!("{:#?}", &camera_matrix);
+        //log::info!("{:#?}", &camera_matrix);
         let camera_components = camera_matrix.to_scale_rotation_translation();
 
         self.position = camera_components.2.as_ref().clone();

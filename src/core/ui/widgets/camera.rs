@@ -34,12 +34,27 @@ impl CameraWidget {
         self.attributes.update(attributes);
         self.zoom.update(zoom);
     }
+
+    pub fn reset(&mut self) {
+        *self = CameraWidget::default();
+    }
+}
+
+impl Default for CameraWidget {
+    fn default() -> Self {
+        CameraWidget {
+            mode: RiotCameraLogicMode::Topdown,
+            attributes: CameraAttributesWidget::default(),
+            zoom: CameraZoomWidget::default(),
+        }
+    }
 }
 
 impl Widget for CameraWidget {
     fn render<'ui>(&mut self, ui: &'ui Ui<'ui>) {
         imgui::Window::new(im_str!("Camera"))
-            .size([200.0, 300.0], imgui::Condition::Appearing)
+            .size([500.0, 600.0], imgui::Condition::Appearing)
+            .always_auto_resize(true)
             .build(&ui, || {
                 let mut current_mode = self.mode.to_usize().or(Some(0)).unwrap();
                 let modes = [im_str!("Topdown"), im_str!("FPS"), im_str!("TPS"), im_str!("Focus")];
@@ -52,8 +67,18 @@ impl Widget for CameraWidget {
                 if imgui::CollapsingHeader::new(im_str!("Attributes")).default_open(false).build(&ui) {
                     self.attributes.render(&ui);
                 }
+
+                ui.separator();
+                ui.spacing();
+
                 if imgui::CollapsingHeader::new(im_str!("Zoom")).default_open(false).build(&ui) {
                     self.zoom.render(&ui);
+                }
+
+                ui.separator();
+
+                if ui.button(im_str!("Reset"), [150.0, 20.0]) {
+                    self.reset();
                 }
             });
     }

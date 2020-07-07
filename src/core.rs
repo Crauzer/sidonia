@@ -23,12 +23,13 @@ pub mod utilities;
 pub struct Core {
     game: Game,
     ui: Ui,
-    first_update_since_reset: bool,
+    first_ui_update_since_reset: bool,
 }
 
 #[derive(Debug)]
 pub enum CoreStatus {
     Idle,
+    PreLoad,
     Running,
     Exit,
 }
@@ -41,8 +42,8 @@ pub enum CoreExitReason {
 impl From<GameState> for CoreStatus {
     fn from(game_state: GameState) -> Self {
         match game_state {
-            GameState::PreGame => CoreStatus::Idle,
-            GameState::Spawn => CoreStatus::Idle,
+            GameState::PreGame => CoreStatus::PreLoad,
+            GameState::Spawn => CoreStatus::PreLoad,
             GameState::GameLoop => CoreStatus::Running,
             GameState::EndGame => CoreStatus::Idle,
             GameState::PreExit => CoreStatus::Exit,
@@ -64,7 +65,7 @@ impl Core {
         Core {
             game: Game::new(),
             ui: Ui::new(),
-            first_update_since_reset: true,
+            first_ui_update_since_reset: true,
         }
     }
 
@@ -79,9 +80,15 @@ impl Core {
 
         //log::info!("{:#?}", );
 
-        self.update_ui(d3d9_device);
-
-        self.first_update_since_reset = false;
+        match status {
+            CoreStatus::Idle => {}
+            CoreStatus::Running => {
+                self.update_ui(d3d9_device);
+                self.first_ui_update_since_reset = false;
+            }
+            CoreStatus::Exit => {}
+            CoreStatus::PreLoad => {}
+        }
 
         status
     }
@@ -91,7 +98,7 @@ impl Core {
 
         self.ui.update(game, d3d9_device);
         self.ui.render();
-        if !self.first_update_since_reset {
+        if !self.first_ui_update_since_reset {
             self.ui.fetch_data(game);
         }
     }
@@ -99,7 +106,7 @@ impl Core {
     pub fn reset(&mut self) {
         self.ui.reset();
 
-        self.first_update_since_reset = true;
+        self.first_ui_update_since_reset = true;
     }
 
     fn end_scene(device: *mut X3dD3d9Device) {
@@ -115,6 +122,7 @@ impl Core {
                         CoreStatus::Idle => {}
                         CoreStatus::Running => {}
                         CoreStatus::Exit => {}
+                        CoreStatus::PreLoad => {}
                     }
                 }
             }

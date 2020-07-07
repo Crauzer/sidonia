@@ -18,17 +18,7 @@ pub struct CameraAttributesWidget {
 
 impl CameraAttributesWidget {
     pub fn new() -> Self {
-        CameraAttributesWidget {
-            world_position: [0.0, 0.0, 0.0],
-            camera_freeze_point: [0.0, 0.0, 0.0],
-            current_velocity: 0.0,
-            current_pitch: 0.0,
-            current_yaw: 0.0,
-            start_yaw: 0.0,
-            start_pitch: 0.0,
-            current_fov: 0.0,
-            last_click_map_time: 0.0,
-        }
+        CameraAttributesWidget::default()
     }
 
     pub fn fetch_data(&self, attributes: &mut RiotCameraLogicAttributes) {
@@ -54,6 +44,26 @@ impl CameraAttributesWidget {
         self.current_fov = attributes.current_fov;
         self.last_click_map_time = attributes.last_click_map_time;
     }
+
+    pub fn reset(&mut self) {
+        *self = CameraAttributesWidget::default()
+    }
+}
+
+impl Default for CameraAttributesWidget {
+    fn default() -> Self {
+        CameraAttributesWidget {
+            world_position: [300.0, 0.0, 300.0],
+            camera_freeze_point: [0.0, 0.0, 0.0],
+            current_velocity: 0.0,
+            current_pitch: 56.0,
+            current_yaw: 180.0,
+            start_yaw: 180.0,
+            start_pitch: 56.0,
+            current_fov: 50.0,
+            last_click_map_time: 0.0,
+        }
+    }
 }
 
 impl Widget for CameraAttributesWidget {
@@ -70,7 +80,15 @@ impl Widget for CameraAttributesWidget {
             .build();
         ui.drag_float(im_str!("Start Yaw"), &mut self.start_yaw).min(0.0).max(360.0).build();
         ui.drag_float(im_str!("FOV"), &mut self.current_fov).min(0.0).max(180.0).build();
+
         ui.separator();
+
         ui.text(format!("Last Click Map Time: {}", self.last_click_map_time));
+
+        ui.separator();
+
+        if ui.button(im_str!("Reset"), [150.0, 20.0]) {
+            self.reset();
+        }
     }
 }

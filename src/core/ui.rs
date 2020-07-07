@@ -6,6 +6,7 @@ use crate::core::{
         widgets::{camera::CameraWidget, game_renderer::GameRendererWidget, Widget},
     },
 };
+use imgui::sys::ImVec4;
 use std::{mem::MaybeUninit, ptr::NonNull};
 use winapi::{
     shared::{d3d9types::D3DDEVICE_CREATION_PARAMETERS, windef::RECT},
@@ -26,8 +27,12 @@ pub struct Ui {
 
 impl Ui {
     pub fn new() -> Self {
+        let mut imgui_context = imgui::Context::create();
+
+        Ui::apply_theme(&mut imgui_context);
+
         Ui {
-            imgui_context: imgui::Context::create(),
+            imgui_context,
             imgui_renderer: None,
             input_manager: None,
 
@@ -134,5 +139,65 @@ impl Ui {
             let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
             imgui_renderer.render(ui.render()).expect("Failed to render UI");
         }
+    }
+
+    // https://github.com/ocornut/imgui/issues/707#issuecomment-512669512
+    fn apply_theme(context: &mut imgui::Context) {
+        let style = context.style_mut();
+
+        style.frame_rounding = 4.0;
+        style.grab_rounding = 4.0;
+
+        let colors = &mut style.colors;
+
+        colors[imgui::StyleColor::Text as usize] = ImVec4::new(0.95, 0.96, 0.98, 1.00).into();
+        colors[imgui::StyleColor::Text as usize] = ImVec4::new(0.95, 0.96, 0.98, 1.00).into();
+        colors[imgui::StyleColor::TextDisabled as usize] = ImVec4::new(0.36, 0.42, 0.47, 1.00).into();
+        colors[imgui::StyleColor::WindowBg as usize] = ImVec4::new(0.11, 0.15, 0.17, 1.00).into();
+        colors[imgui::StyleColor::ChildBg as usize] = ImVec4::new(0.15, 0.18, 0.22, 1.00).into();
+        colors[imgui::StyleColor::PopupBg as usize] = ImVec4::new(0.08, 0.08, 0.08, 0.94).into();
+        colors[imgui::StyleColor::Border as usize] = ImVec4::new(0.08, 0.10, 0.12, 1.00).into();
+        colors[imgui::StyleColor::BorderShadow as usize] = ImVec4::new(0.00, 0.00, 0.00, 0.00).into();
+        colors[imgui::StyleColor::FrameBg as usize] = ImVec4::new(0.20, 0.25, 0.29, 1.00).into();
+        colors[imgui::StyleColor::FrameBgHovered as usize] = ImVec4::new(0.12, 0.20, 0.28, 1.00).into();
+        colors[imgui::StyleColor::FrameBgActive as usize] = ImVec4::new(0.09, 0.12, 0.14, 1.00).into();
+        colors[imgui::StyleColor::TitleBg as usize] = ImVec4::new(0.09, 0.12, 0.14, 0.65).into();
+        colors[imgui::StyleColor::TitleBgActive as usize] = ImVec4::new(0.08, 0.10, 0.12, 1.00).into();
+        colors[imgui::StyleColor::TitleBgCollapsed as usize] = ImVec4::new(0.00, 0.00, 0.00, 0.51).into();
+        colors[imgui::StyleColor::MenuBarBg as usize] = ImVec4::new(0.15, 0.18, 0.22, 1.00).into();
+        colors[imgui::StyleColor::ScrollbarBg as usize] = ImVec4::new(0.02, 0.02, 0.02, 0.39).into();
+        colors[imgui::StyleColor::ScrollbarGrab as usize] = ImVec4::new(0.20, 0.25, 0.29, 1.00).into();
+        colors[imgui::StyleColor::ScrollbarGrabHovered as usize] = ImVec4::new(0.18, 0.22, 0.25, 1.00).into();
+        colors[imgui::StyleColor::ScrollbarGrabActive as usize] = ImVec4::new(0.09, 0.21, 0.31, 1.00).into();
+        colors[imgui::StyleColor::CheckMark as usize] = ImVec4::new(0.28, 0.56, 1.00, 1.00).into();
+        colors[imgui::StyleColor::SliderGrab as usize] = ImVec4::new(0.28, 0.56, 1.00, 1.00).into();
+        colors[imgui::StyleColor::SliderGrabActive as usize] = ImVec4::new(0.37, 0.61, 1.00, 1.00).into();
+        colors[imgui::StyleColor::Button as usize] = ImVec4::new(0.20, 0.25, 0.29, 1.00).into();
+        colors[imgui::StyleColor::ButtonHovered as usize] = ImVec4::new(0.28, 0.56, 1.00, 1.00).into();
+        colors[imgui::StyleColor::ButtonActive as usize] = ImVec4::new(0.06, 0.53, 0.98, 1.00).into();
+        colors[imgui::StyleColor::Header as usize] = ImVec4::new(0.20, 0.25, 0.29, 0.55).into();
+        colors[imgui::StyleColor::HeaderHovered as usize] = ImVec4::new(0.26, 0.59, 0.98, 0.80).into();
+        colors[imgui::StyleColor::HeaderActive as usize] = ImVec4::new(0.26, 0.59, 0.98, 1.00).into();
+        colors[imgui::StyleColor::Separator as usize] = ImVec4::new(0.20, 0.25, 0.29, 1.00).into();
+        colors[imgui::StyleColor::SeparatorHovered as usize] = ImVec4::new(0.10, 0.40, 0.75, 0.78).into();
+        colors[imgui::StyleColor::SeparatorActive as usize] = ImVec4::new(0.10, 0.40, 0.75, 1.00).into();
+        colors[imgui::StyleColor::ResizeGrip as usize] = ImVec4::new(0.26, 0.59, 0.98, 0.25).into();
+        colors[imgui::StyleColor::ResizeGripHovered as usize] = ImVec4::new(0.26, 0.59, 0.98, 0.67).into();
+        colors[imgui::StyleColor::ResizeGripActive as usize] = ImVec4::new(0.26, 0.59, 0.98, 0.95).into();
+        colors[imgui::StyleColor::Tab as usize] = ImVec4::new(0.11, 0.15, 0.17, 1.00).into();
+        colors[imgui::StyleColor::TabHovered as usize] = ImVec4::new(0.26, 0.59, 0.98, 0.80).into();
+        colors[imgui::StyleColor::TabActive as usize] = ImVec4::new(0.20, 0.25, 0.29, 1.00).into();
+        colors[imgui::StyleColor::TabUnfocused as usize] = ImVec4::new(0.11, 0.15, 0.17, 1.00).into();
+        colors[imgui::StyleColor::TabUnfocusedActive as usize] = ImVec4::new(0.11, 0.15, 0.17, 1.00).into();
+        colors[imgui::StyleColor::PlotLines as usize] = ImVec4::new(0.61, 0.61, 0.61, 1.00).into();
+        colors[imgui::StyleColor::PlotLinesHovered as usize] = ImVec4::new(1.00, 0.43, 0.35, 1.00).into();
+        colors[imgui::StyleColor::PlotHistogram as usize] = ImVec4::new(0.90, 0.70, 0.00, 1.00).into();
+        colors[imgui::StyleColor::PlotHistogramHovered as usize] = ImVec4::new(1.00, 0.60, 0.00, 1.00).into();
+        colors[imgui::StyleColor::TextSelectedBg as usize] = ImVec4::new(0.26, 0.59, 0.98, 0.35).into();
+        colors[imgui::StyleColor::DragDropTarget as usize] = ImVec4::new(1.00, 1.00, 0.00, 0.90).into();
+        colors[imgui::StyleColor::NavHighlight as usize] = ImVec4::new(0.26, 0.59, 0.98, 1.00).into();
+        colors[imgui::StyleColor::NavWindowingHighlight as usize] = ImVec4::new(1.00, 1.00, 1.00, 0.70).into();
+        colors[imgui::StyleColor::NavWindowingDimBg as usize] = ImVec4::new(0.80, 0.80, 0.80, 0.20).into();
+        colors[imgui::StyleColor::ModalWindowDimBg as usize] = ImVec4::new(0.80, 0.80, 0.80, 0.35).into();
     }
 }

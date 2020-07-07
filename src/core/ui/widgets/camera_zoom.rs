@@ -39,6 +39,23 @@ impl CameraZoomWidget {
         self.current = camera_zoom.current;
         self.desired = camera_zoom.desired;
     }
+
+    pub fn reset(&mut self) {
+        *self = CameraZoomWidget::default();
+    }
+}
+
+impl Default for CameraZoomWidget {
+    fn default() -> Self {
+        CameraZoomWidget {
+            zoom_ease_time: 0.2,
+            zoom_min_speed: 3.0,
+            scale: 1.0,
+            velocity: 0.0,
+            current: 2250.0,
+            desired: 2250.0,
+        }
+    }
 }
 
 impl Widget for CameraZoomWidget {
@@ -49,5 +66,11 @@ impl Widget for CameraZoomWidget {
         ui.input_float(im_str!("Velocity"), &mut self.velocity).build();
         ui.input_float(im_str!("Current Zoom"), &mut self.current).build();
         ui.input_float(im_str!("Desired Zoom"), &mut self.desired).build();
+
+        ui.separator();
+
+        if ui.button(im_str!("Reset"), [150.0, 20.0]) {
+            self.reset();
+        }
     }
 }
