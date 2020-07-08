@@ -23,6 +23,7 @@ crossbeam-utils = "0.7.2"
 clipboard-win = "3.1.1"
 arraydeque = "0.4.5"
 glam = "0.9.1"
+bitflags = "1.2.1"
 
 [lib]
 name = "sidonia_core"

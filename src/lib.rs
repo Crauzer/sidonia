@@ -2,12 +2,16 @@
 #![feature(abi_thiscall)]
 #![feature(c_variadic)]
 #![feature(move_ref_pattern)]
+#![feature(never_type)]
 #![allow(dead_code)]
 #![allow(unused_variables)]
 #![allow(unused_assignments)]
 
 #[macro_use]
 extern crate imgui;
+
+#[macro_use]
+extern crate bitflags;
 
 use crate::core::{utilities::logging, Core};
 use std::{

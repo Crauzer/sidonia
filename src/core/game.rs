@@ -4,6 +4,7 @@ use crate::core::{
     },
     utilities::memory,
 };
+use crate::core::riot::ai_hero::RiotAiHero;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -109,6 +110,13 @@ impl Game {
     fn fetch_hud_manager() -> *mut RiotHudManager {
         unsafe {
             let ptr = memory::convert_file_offset_to_ptr(0x02D78D24) as *mut *mut RiotHudManager;
+
+            *ptr
+        }
+    }
+    fn fetch_player() -> *mut RiotAiHero {
+        unsafe {
+            let ptr = memory::convert_file_offset_to_ptr(0x02D77F48) as *mut *mut RiotAiHero;
 
             *ptr
         }
