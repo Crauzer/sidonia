@@ -1,5 +1,5 @@
-use winapi::shared::minwindef::LPVOID;
 use std::os::raw::c_char;
+use winapi::shared::minwindef::LPVOID;
 
 #[repr(C)]
 #[derive(Debug)]
@@ -18,13 +18,13 @@ pub struct RiotReplicationManager {
     sync_on_visible_rep_data: u32,
     sync_id_global_rep_data: u32,
     is_high_priority: bool,
-    base: LPVOID
+    base: LPVOID,
 }
 
 #[repr(C)]
 #[derive(Debug)]
 pub struct RiotCReplData32 {
-    info: *const RiotCReplInfo32
+    info: *const RiotCReplInfo32,
 }
 
 #[repr(C)]
@@ -33,7 +33,7 @@ pub struct RiotCReplInfo32 {
     variable_count: u32,
     variable_names: [*const c_char; 32],
     variable_offsets: [u32; 32],
-    variable_is_float_array: [bool; 32]
+    variable_is_float_array: [bool; 32],
 }
 
 #[repr(C)]
@@ -42,7 +42,7 @@ pub struct RiotReplicate<T> {
     value: T,
     index: usize,
     replication_type: RiotReplicationTypeFlags,
-    replication_manager: *mut RiotReplicationManager
+    replication_manager: *mut RiotReplicationManager,
 }
 
 bitflags! {

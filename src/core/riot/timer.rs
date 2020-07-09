@@ -5,10 +5,10 @@ pub struct RiotBasicTimer {
     timer_interface: RiotITimer,
     start_ticks: f64,
     elapsed_ticks: f64,
-    is_active: bool
+    is_active: bool,
 }
 
 #[repr(C)]
 pub struct RiotITimer {
-    vtable: LPVOID
+    vtable: LPVOID,
 }

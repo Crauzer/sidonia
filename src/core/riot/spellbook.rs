@@ -1,10 +1,13 @@
+use crate::core::{
+    msvc::{smart_pointers::StdSharedPtr, vector::StdVector},
+    riot::{
+        issue_order::RiotIIssueOrders,
+        net::{RiotNetId, RiotNetVisibilityObject},
+        r3d::vector3::R3dVector3,
+        replication::RiotReplicate,
+    },
+};
 use winapi::shared::minwindef::LPVOID;
-use crate::core::riot::r3d::vector3::R3dVector3;
-use crate::core::riot::net::{RiotNetVisibilityObject, RiotNetId};
-use crate::core::riot::replication::RiotReplicate;
-use crate::core::msvc::vector::StdVector;
-use crate::core::msvc::smart_pointers::StdSharedPtr;
-use crate::core::riot::issue_order::RiotIIssueOrders;
 
 #[repr(C)]
 pub struct RiotSpellbook {
@@ -29,18 +32,18 @@ pub struct RiotSpellbook {
     cast_bit_1: RiotReplicate<u32>,
     changed_tool_tip: bool,
     spell_max_levels_override: [u32; 4],
-    spells_up_levels_override: [[u32; 6]; 4]
+    spells_up_levels_override: [[u32; 6]; 4],
 }
 
 #[repr(C)]
 pub struct RiotSpellbookOwnerOverride {
     spellbook_owner: RiotISpellbookOwner,
-    owner: *mut RiotISpellbookOwner
+    owner: *mut RiotISpellbookOwner,
 }
 
 #[repr(C)]
 pub struct RiotISpellbookOwner {
-    vtable: LPVOID
+    vtable: LPVOID,
 }
 
 #[repr(C)]
@@ -164,11 +167,11 @@ pub struct RiotCharacterIntermediate {
 
 #[repr(C)]
 pub struct RiotSpellInstance {
-    vtable: LPVOID
+    vtable: LPVOID,
 }
 
 #[repr(C)]
 union CanCastBits {
     bits32: [u32; 2],
-    bits64: u64
+    bits64: u64,
 }

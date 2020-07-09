@@ -10,5 +10,5 @@ pub mod scene;
 pub mod screen_buffer;
 pub mod texture;
 pub mod unknown_interface;
-pub mod vector3;
 pub mod vector2;
+pub mod vector3;

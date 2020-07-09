@@ -1,12 +1,13 @@
-use crate::core::riot::replication::RiotReplicate;
-use crate::core::riot::position_owner::RiotIPositionOwner;
-use crate::core::msvc::vector::StdVector;
+use crate::core::{
+    msvc::vector::StdVector,
+    riot::{position_owner::RiotIPositionOwner, replication::RiotReplicate},
+};
 use winapi::shared::minwindef::LPVOID;
 
 #[repr(C)]
 #[derive(Debug)]
 pub struct RiotIExperienceOwner {
-    vtable: LPVOID
+    vtable: LPVOID,
 }
 
 #[repr(C)]
@@ -21,5 +22,5 @@ pub struct RiotExperience {
     level_cap: i32,
     base_experience_multiple: f32,
     level_difference_experience_multiple: f32,
-    minimum_exp_multiple: f32
+    minimum_exp_multiple: f32,
 }

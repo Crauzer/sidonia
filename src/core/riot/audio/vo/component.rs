@@ -3,7 +3,7 @@ use winapi::shared::minwindef::LPVOID;
 #[repr(C)]
 #[derive(Debug)]
 pub struct RiotAudioIVoComponent {
-    vtable: LPVOID
+    vtable: LPVOID,
 }
 
 #[repr(u32)]

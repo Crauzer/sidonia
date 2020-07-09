@@ -1,9 +1,11 @@
-use std::fmt::Display;
 use bitflags::_core::fmt::Formatter;
-use std::error::Error;
-use std::ffi::{CStr, CString};
-use std::os::raw::c_char;
-use std::fmt;
+use std::{
+    error::Error,
+    ffi::{CStr, CString},
+    fmt,
+    fmt::Display,
+    os::raw::c_char,
+};
 
 #[repr(C)]
 union Data {

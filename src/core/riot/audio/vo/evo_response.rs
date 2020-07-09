@@ -1,8 +1,7 @@
-use crate::core::msvc::string::StdString;
-use crate::core::riot::RiotMetadata;
+use crate::core::{msvc::string::StdString, riot::RiotMetadata};
 
 #[repr(C)]
 pub struct RiotAudioVoEvoRespone {
     meta_flags: RiotMetadata,
-    response: StdString
+    response: StdString,
 }

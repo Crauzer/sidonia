@@ -1,11 +1,12 @@
-use crate::core::riot::ai_hero::RiotAiHero;
-use crate::core::msvc::vector::StdVector;
-use crate::core::msvc::string::StdString;
+use crate::core::{
+    msvc::{string::StdString, vector::StdVector},
+    riot::ai_hero::RiotAiHero,
+};
 
 #[repr(C)]
 pub struct RiotContextualEmoteComponent {
     owner: *mut RiotAiHero,
-    emote_play_data: [StdVector<RiotContextualEmotePlayData>; 21] // per-category
+    emote_play_data: [StdVector<RiotContextualEmotePlayData>; 21], // per-category
 }
 
 #[repr(C)]
@@ -14,7 +15,7 @@ pub struct RiotContextualEmotePlayData {
     parameter: StdString,
     hashed_parameter: u32,
     animation_name: StdString,
-    vo_event_name: StdString
+    vo_event_name: StdString,
 }
 
 #[repr(u32)]

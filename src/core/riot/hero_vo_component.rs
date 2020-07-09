@@ -1,8 +1,14 @@
-use crate::core::riot::net::RiotOnNetworkRegister;
-use crate::core::riot::ai_hero::RiotAiHero;
-use crate::core::msvc::map::StdMap;
-use crate::core::riot::audio::vo::component::{RiotAudioIVoComponent, RiotAudioVoComponentEventType};
-use crate::core::riot::audio::vo::meta_tags::RiotAudioVoMetaTags;
+use crate::core::{
+    msvc::map::StdMap,
+    riot::{
+        ai_hero::RiotAiHero,
+        audio::vo::{
+            component::{RiotAudioIVoComponent, RiotAudioVoComponentEventType},
+            meta_tags::RiotAudioVoMetaTags,
+        },
+        net::RiotOnNetworkRegister,
+    },
+};
 
 #[repr(C)]
 pub struct RiotHeroVoComponent {
@@ -14,11 +20,11 @@ pub struct RiotHeroVoComponent {
     event_last_timestamps: StdMap<u32, f32>,
     event_cooldowns: StdMap<u32, f32>,
     last_event_finished_timestamp: f32,
-    vo_meta_tags: RiotAudioVoMetaTags
+    vo_meta_tags: RiotAudioVoMetaTags,
 }
 
 #[repr(C)]
 pub struct RiotHeroVoComponentPingEvent {
     command: RiotAudioVoComponentEventType,
-    timestamp: f32
+    timestamp: f32,
 }

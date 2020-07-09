@@ -1,10 +1,10 @@
 use crate::core::{
     riot::{
-        game_clock::RiotGameClock, hud_manager::RiotHudManager, r3d::render_layer::R3dRenderLayer, render_pipeline::RiotRenderPipeline,
+        ai_hero::RiotAiHero, game_clock::RiotGameClock, hud_manager::RiotHudManager, r3d::render_layer::R3dRenderLayer,
+        render_pipeline::RiotRenderPipeline,
     },
     utilities::memory,
 };
-use crate::core::riot::ai_hero::RiotAiHero;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
