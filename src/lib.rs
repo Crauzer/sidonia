@@ -3,6 +3,8 @@
 #![feature(c_variadic)]
 #![feature(move_ref_pattern)]
 #![feature(never_type)]
+#![feature(generic_associated_types)]
+#![feature(ptr_offset_from)]
 #![allow(dead_code)]
 #![allow(unused_variables)]
 #![allow(unused_assignments)]
