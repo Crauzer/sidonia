@@ -13,3 +13,4 @@ pub mod surface;
 pub mod swap_effect_type;
 pub mod texture;
 pub mod vertex_buffer;
+pub mod vertex_declaration;

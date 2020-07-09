@@ -1,6 +1,9 @@
 use crate::core::{
     riot::{
-        ai_hero::RiotAiHero, game_clock::RiotGameClock, hud_manager::RiotHudManager, r3d::render_layer::R3dRenderLayer,
+        ai_hero::RiotAiHero,
+        game_clock::RiotGameClock,
+        hud_manager::RiotHudManager,
+        r3d::{render_layer::R3dRenderLayer, scene::R3dSceneLayer},
         render_pipeline::RiotRenderPipeline,
     },
     utilities::memory,
@@ -22,6 +25,7 @@ pub struct Game {
     game_clock: *mut RiotGameClock,
     render_pipeline: *mut RiotRenderPipeline,
     renderer: *mut R3dRenderLayer,
+    scene: *mut R3dSceneLayer,
     hud_manager: *mut RiotHudManager,
 }
 
@@ -34,6 +38,7 @@ impl Game {
 
         let render_pipeline = Game::fetch_render_pipeline();
         let renderer = Game::fetch_renderer();
+        let scene = Game::fetch_scene();
         let game_clock = Game::fetch_game_clock();
         let hud_manager = Game::fetch_hud_manager();
 
@@ -42,6 +47,7 @@ impl Game {
             game_clock,
             render_pipeline,
             renderer,
+            scene,
             hud_manager,
         }
     }
@@ -51,6 +57,9 @@ impl Game {
     }
     pub fn renderer_mut(&mut self) -> Option<&'static mut R3dRenderLayer> {
         unsafe { self.renderer.as_mut::<'static>() }
+    }
+    pub fn scene_mut(&mut self) -> Option<&'static mut R3dSceneLayer> {
+        unsafe { self.scene.as_mut::<'static>() }
     }
     pub fn hud_manager_mut(&mut self) -> Option<&'static mut RiotHudManager> {
         unsafe { self.hud_manager.as_mut::<'static>() }
@@ -105,6 +114,13 @@ impl Game {
             let render_layer_ptr = memory::convert_file_offset_to_ptr(0x02D79078) as *mut *mut R3dRenderLayer;
 
             *render_layer_ptr
+        }
+    }
+    fn fetch_scene() -> *mut R3dSceneLayer {
+        unsafe {
+            let ptr = memory::convert_file_offset_to_ptr(0x02D78F48) as *mut *mut R3dSceneLayer;
+
+            *ptr
         }
     }
     fn fetch_hud_manager() -> *mut RiotHudManager {

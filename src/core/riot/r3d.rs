@@ -1,4 +1,5 @@
 pub mod asset_category;
+pub mod auto_restore_texture;
 pub mod camera;
 pub mod color;
 pub mod color_format;
