@@ -26,7 +26,7 @@ impl<T> ops::Index<usize> for StdVector<T> {
     fn index(&self, index: usize) -> &Self::Output {
         if index < self.len() {
             let item_size = mem::size_of::<T>();
-            unsafe { self.start.offset(item_size as isize).as_ref().unwrap() }
+            unsafe { self.start.offset((item_size * index) as isize).as_ref().unwrap() }
         } else {
             panic!("index was outside the bounds of the vector");
         }
@@ -36,7 +36,7 @@ impl<T> ops::IndexMut<usize> for StdVector<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         if index < self.len() {
             let item_size = mem::size_of::<T>();
-            unsafe { self.start.offset(item_size as isize).as_mut().unwrap() }
+            unsafe { self.start.offset((item_size * index) as isize).as_mut().unwrap() }
         } else {
             panic!("index was outside the bounds of the vector");
         }
