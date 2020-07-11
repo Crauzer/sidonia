@@ -8,11 +8,6 @@ pub struct StdVector<T> {
     capacity: *mut T,
 }
 
-pub struct StdVectorIterator<T> {
-    vector: StdVector<T>,
-    index: usize,
-}
-
 impl<T> StdVector<T> {
     #[inline]
     pub fn len(&self) -> usize {

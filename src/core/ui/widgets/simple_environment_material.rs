@@ -1,10 +1,9 @@
 use crate::core::{
     riot::simple_environment::{RiotSimpleEnvironmentMaterial, RiotSimpleEnvironmentMaterialFlags, RiotSimpleEnvironmentMaterialType},
-    ui::widgets::Widget,
+    ui::widgets::{simple_environment_channel::SimpleEnvironmentChannelWidget, Widget},
 };
 use imgui::Ui;
 use std::ffi::CStr;
-use crate::core::ui::widgets::simple_environment_channel::SimpleEnvironmentChannelWidget;
 
 pub struct SimpleEnvironmentMaterialWidget {
     name: String,
@@ -20,7 +19,7 @@ impl SimpleEnvironmentMaterialWidget {
             name: String::with_capacity(260),
             material_type: RiotSimpleEnvironmentMaterialType::Default,
             flags: RiotSimpleEnvironmentMaterialFlags::from_bits(0).unwrap(),
-            channels: Vec::with_capacity(8)
+            channels: Vec::with_capacity(8),
         }
     }
 

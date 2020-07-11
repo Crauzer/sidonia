@@ -1,8 +1,9 @@
-use crate::core::riot::simple_environment::RiotSimpleEnvironmentChannel;
-use crate::core::riot::color::RiotColorValue;
-use crate::core::ui::widgets::Widget;
+use crate::core::{
+    riot::{color::RiotColorValue, simple_environment::RiotSimpleEnvironmentChannel},
+    ui::widgets::Widget,
+};
+use glam::{Mat4, Quat, Vec3};
 use imgui::Ui;
-use glam::{Mat4, Vec3, Quat};
 
 pub struct SimpleEnvironmentChannelWidget {
     id: usize,
@@ -10,7 +11,7 @@ pub struct SimpleEnvironmentChannelWidget {
     texture_name: String,
     position: Vec3,
     rotation: Quat,
-    scale: Vec3
+    scale: Vec3,
 }
 
 impl SimpleEnvironmentChannelWidget {
@@ -21,7 +22,7 @@ impl SimpleEnvironmentChannelWidget {
             texture_name: String::with_capacity(260),
             position: Vec3::zero(),
             rotation: Quat::identity(),
-            scale: Vec3::zero()
+            scale: Vec3::zero(),
         }
     }
 
