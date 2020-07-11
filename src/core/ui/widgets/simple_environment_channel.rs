@@ -63,16 +63,21 @@ impl Widget for SimpleEnvironmentChannelWidget {
                 .preview(imgui::ColorPreview::Alpha)
                 .build(ui);
             ui.separator();
-            ui.bullet_text(im_str!("Transform"));
-            ui.input_float3(im_str!("Position"), self.position.as_mut())
-                //.read_only(true)
-                .build();
-            ui.input_float4(im_str!("Rotation"), self.rotation.as_mut())
-                //.read_only(true)
-                .build();
-            ui.input_float3(im_str!("Scale"), self.scale.as_mut())
-                //.read_only(true)
-                .build();
+            if imgui::CollapsingHeader::new(im_str!("Transform"))
+                .default_open(false)
+                .build(ui)
+            {
+                ui.input_float3(im_str!("Position"), self.position.as_mut())
+                    //.read_only(true)
+                    .build();
+                ui.input_float4(im_str!("Rotation"), self.rotation.as_mut())
+                    //.read_only(true)
+                    .build();
+                ui.input_float3(im_str!("Scale"), self.scale.as_mut())
+                    //.read_only(true)
+                    .build();
+            }
+
         });
     }
 }

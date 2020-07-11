@@ -3,7 +3,7 @@ use winapi::shared::minwindef::LPVOID;
 
 static mut BASE: Option<u32> = None;
 
-const IDA_BASE: u32 = 0x400000;
+const IDA_BASE: i32 = 0x400000;
 
 pub fn base() -> u32 {
     unsafe {
@@ -23,7 +23,7 @@ pub fn base() -> u32 {
 }
 
 pub fn convert_file_offset_to_ptr(offset: u32) -> LPVOID {
-    (offset + (base() - IDA_BASE)) as LPVOID
+    (offset as i32 + (base() as i32 - IDA_BASE)) as LPVOID
 }
 
 pub fn wait_for_ptr_non_zero(ptr_address: LPVOID) -> LPVOID {
