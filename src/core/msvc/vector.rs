@@ -47,6 +47,14 @@ impl<T> ops::Deref for StdVector<T> {
     type Target = [T];
     #[inline]
     fn deref(&self) -> &Self::Target {
+        log::info!(
+            "len: {} start: {:#?} end: {:#?} cap: {:#?}",
+            self.len(),
+            self.start,
+            self.end,
+            self.capacity
+        );
+
         unsafe { slice::from_raw_parts(self.start, self.len()) }
     }
 }

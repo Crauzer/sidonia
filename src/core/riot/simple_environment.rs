@@ -1,11 +1,23 @@
 use crate::core::{
-    msvc::{map::StdMap, unique_ptr::StdUniquePtr, vector::StdVector},
+    msvc::{map::StdMap, string::StdString, unique_ptr::StdUniquePtr, vector::StdVector},
     riot::{
         baked_environment::RiotBakedEnvironmentRenderer,
-        r3d::{auto_restore_texture::R3dAutoRestoreTextureSet, texture::R3dTexture, vector3::R3dVector3},
-        x3d::vertex_declaration::X3dIVertexDeclaration,
+        color::RiotColorValue,
+        r3d::{
+            auto_restore_texture::R3dAutoRestoreTextureSet, color::R3dColor, matrix44::R3dMatrix44, texture::R3dTexture,
+            vector3::R3dVector3,
+        },
+        x3d::{index_buffer::X3dIIndexBuffer, vertex_buffer::X3dIVertexBuffer, vertex_declaration::X3dIVertexDeclaration},
     },
 };
+use std::{ffi::CStr, ops::Deref};
+use winapi::{
+    ctypes::c_char,
+    shared::minwindef::{LPCVOID, LPVOID},
+    um::winnt::PVOID,
+};
+
+// Renderer
 
 #[repr(C)]
 pub struct RiotSimpleEnvironmentRenderer {
@@ -55,7 +67,7 @@ pub enum RiotSimpleEnvironmentRendererMode {
 }
 
 #[repr(u32)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum RiotSimpleEnvironmentMaterialType {
     Default = 0x0,
     Decal = 0x1,
@@ -83,4 +95,124 @@ pub struct RiotSimpleEnvironmentDisplayListElement {
 #[derive(Debug)]
 pub struct RiotSimpleEnvironmentShaderVariants {
     death_screen_variant_index: i32,
+}
+
+// Asset
+
+#[repr(C)]
+pub struct RiotSimpleEnvironmentAsset {
+    /*
+      std::__1::string m_FileName;
+    const Riot::PackageInterface *m_Package;
+    std::__1::vector<Riot::Eternity::SimpleEnvironment::Material *,std::__1::allocator<Riot::Eternity::SimpleEnvironment::Material *> > m_Materials;
+    std::__1::vector<Riot::X3D::IVertexBuffer *,std::__1::allocator<Riot::X3D::IVertexBuffer *> > m_VertexBuffers;
+    std::__1::vector<Riot::X3D::IIndexBuffer *,std::__1::allocator<Riot::X3D::IIndexBuffer *> > m_IndexBuffers;
+    std::__1::vector<Riot::Eternity::SimpleEnvironment::File::MESH,std::__1::allocator<Riot::Eternity::SimpleEnvironment::File::MESH> > m_Meshes;
+    std::__1::vector<Riot::Eternity::SimpleEnvironment::File::NODE,std::__1::allocator<Riot::Eternity::SimpleEnvironment::File::NODE> > m_Nodes;
+
+       */
+    file_name: StdString,
+    package_interface: LPCVOID, // const Riot::PackageInterface*
+    materials: StdVector<*mut RiotSimpleEnvironmentMaterial>,
+    vertex_buffers: StdVector<*mut X3dIVertexBuffer>,
+    index_buffers: StdVector<*mut X3dIIndexBuffer>,
+    meshes: StdVector<()>,
+    nodes: StdVector<()>,
+}
+
+bitflags! {
+    pub struct RiotSimpleEnvironmentMaterialFlags: u32 {
+        const GROUND = 1 << 0;
+        const NO_SHADOW = 1 << 1;
+        const VERTEX_ALPHA = 1 << 2;
+        const LIGHTMAPPED = 1 << 3;
+        const DUAL_VERTEX_COLOR = 1 << 4;
+        const BACKGROUND = 1 << 5;
+        const BK_WITH_FOG = 1 << 6;
+    }
+}
+
+#[repr(C)]
+pub struct RiotSimpleEnvironmentMaterial {
+    // Riot::Eternity::SimpleEnvironment::File::MATERIAL
+    name: [u8; 260],
+    material_type: RiotSimpleEnvironmentMaterialType,
+    flags: RiotSimpleEnvironmentMaterialFlags,
+    channels: [RiotSimpleEnvironmentChannel; 8],
+    // Riot::Eternity::SimpleEnvironment::File::MATERIAL
+    textures: [*mut R3dTexture; 8],
+}
+
+#[repr(C)]
+pub struct RiotSimpleEnvironmentChannel {
+    color: RiotColorValue,
+    texture_name: [u8; 260],
+    transform: R3dMatrix44,
+}
+
+impl RiotSimpleEnvironmentAsset {
+    pub fn name(&self) -> String {
+        self.file_name.to_string()
+    }
+    pub fn package_interface(&self) -> LPCVOID {
+        self.package_interface
+    }
+    pub fn materials(&self) -> Vec<Option<&'static RiotSimpleEnvironmentMaterial>> {
+        unsafe {
+            self.materials
+                .deref()
+                .iter()
+                .map(|x| x.as_ref::<'static>())
+                .collect::<Vec<Option<&'static RiotSimpleEnvironmentMaterial>>>()
+        }
+    }
+    pub fn materials_mut(&mut self) -> Vec<Option<&'static mut RiotSimpleEnvironmentMaterial>> {
+        unsafe {
+            self.materials
+                .deref()
+                .iter()
+                .map(|x| x.as_mut::<'static>())
+                .collect::<Vec<Option<&'static mut RiotSimpleEnvironmentMaterial>>>()
+        }
+    }
+}
+
+impl RiotSimpleEnvironmentMaterial {
+    pub fn name(&self) -> &str {
+        unsafe { CStr::from_bytes_with_nul_unchecked(self.name.as_ref()).to_str().unwrap() }
+    }
+    pub fn material_type(&self) -> RiotSimpleEnvironmentMaterialType {
+        self.material_type
+    }
+    pub fn flags(&self) -> RiotSimpleEnvironmentMaterialFlags {
+        self.flags
+    }
+    pub fn channels(&self) -> &[RiotSimpleEnvironmentChannel; 8] {
+        &self.channels
+    }
+    pub fn channels_mut(&mut self) -> &mut [RiotSimpleEnvironmentChannel; 8] {
+        &mut self.channels
+    }
+}
+
+impl RiotSimpleEnvironmentChannel {
+    pub fn color(&self) -> RiotColorValue {
+        self.color
+    }
+    pub fn color_mut(&mut self) -> &mut RiotColorValue {
+        &mut self.color
+    }
+    pub fn texture_name(&self) -> &str {
+        unsafe { CStr::from_bytes_with_nul_unchecked(self.texture_name.as_ref()).to_str().unwrap() }
+    }
+    pub fn transform(&self) -> R3dMatrix44 {
+        self.transform
+    }
+
+    pub fn set_color(&mut self, color: RiotColorValue) {
+        self.color = color;
+    }
+    pub fn set_transform(&mut self, transform: R3dMatrix44) {
+        self.transform = transform;
+    }
 }

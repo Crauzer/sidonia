@@ -3,7 +3,9 @@ use crate::core::{
     riot::x3d::d3d9::device::X3dD3d9Device,
     ui::{
         input_manager::InputManager,
-        widgets::{camera::CameraWidget, game_renderer::GameRendererWidget, Widget},
+        widgets::{
+            camera::CameraWidget, game_renderer::GameRendererWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, Widget,
+        },
     },
 };
 use imgui::sys::ImVec4;
@@ -23,6 +25,7 @@ pub struct Ui {
 
     game_renderer: GameRendererWidget,
     camera: CameraWidget,
+    simple_environment_asset: SimpleEnvironmentAssetWidget,
 }
 
 impl Ui {
@@ -38,6 +41,7 @@ impl Ui {
 
             game_renderer: GameRendererWidget::new(),
             camera: CameraWidget::new(),
+            simple_environment_asset: SimpleEnvironmentAssetWidget::new(),
         }
     }
 
@@ -96,6 +100,9 @@ impl Ui {
                 self.camera.fetch_data(camera_logic);
             }
         }
+        if let Some(simple_environment_asset) = game.simple_environment_asset_mut() {
+            self.simple_environment_asset.fetch_data(simple_environment_asset);
+        }
     }
 
     pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {
@@ -106,13 +113,22 @@ impl Ui {
             }
             // Both the Game renderer and our renderer are initialized, do update
             (true, true) => {
+                // Update Game Renderer Widget
                 if let Some(game_renderer) = game.renderer_mut() {
                     self.game_renderer.update(game_renderer);
                 }
+
+                // Update Hud Manager Widgets
                 if let Some(hud_manager) = game.hud_manager_mut() {
+                    // Update Camera Widget
                     if let Some(camera_logic) = hud_manager.camera_logic_mut() {
                         self.camera.update(camera_logic);
                     }
+                }
+
+                // Update Simple Environment Widget
+                if let Some(simple_envionment_asset) = game.simple_environment_asset_mut() {
+                    self.simple_environment_asset.update(simple_envionment_asset);
                 }
             }
             _ => {}
@@ -135,6 +151,7 @@ impl Ui {
 
             self.game_renderer.render(&ui);
             self.camera.render(&ui);
+            self.simple_environment_asset.render(&ui);
 
             let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
             imgui_renderer.render(ui.render()).expect("Failed to render UI");

@@ -5,6 +5,7 @@ pub mod audio;
 pub mod avatar;
 pub mod baked_environment;
 pub mod camera_logic;
+pub mod color;
 pub mod contextual_emote_component;
 pub mod event_system;
 pub mod evolution;
