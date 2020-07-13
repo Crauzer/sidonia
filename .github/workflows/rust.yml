@@ -23,5 +23,5 @@ jobs:
         override: true
         profile: minimal 
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --release --verbose
       
