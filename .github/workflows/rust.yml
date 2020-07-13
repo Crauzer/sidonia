@@ -29,7 +29,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: sidonia-release-x86
-        path: target/i686-pc-windows-msvc/release/*.*
+        path: target/i686-pc-windows-msvc/release/*
     
     - name: Create Release
       id: create_release
