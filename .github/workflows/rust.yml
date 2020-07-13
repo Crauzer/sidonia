@@ -24,4 +24,23 @@ jobs:
         profile: minimal 
     - name: Build
       run: cargo build --release --verbose
-      
+    
+    - uses: actions/upload-artifact@v1
+      with:
+        name: sidonia-release-x86
+        path: |
+          .\target\i686-pc-windows-msvc\release
+          !.\target\i686-pc-windows-msvc\release\*\*.*
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
