@@ -15,6 +15,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Set current Time as an environment variable
+      run: |
+        echo "::set-env name=NOW_TAG::$(date +'v%d%m%Y.%H%M%S')"
+        echo "::set-env name=NOW::$(date +'%d-%m-%Y-%H:%M:%S')"
+    
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
       with:
@@ -43,7 +48,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ env.NOW_TAG }
+          release_name: Release ${{ env.NOW }}
           draft: false
           prerelease: false
