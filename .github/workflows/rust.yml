@@ -26,7 +26,7 @@ jobs:
       run: cargo build --release --verbose
     
     - name: smthidk
-      run: tree /F /A
+      run: ls -r
     
     - name: Make release artifact
       uses: actions/upload-artifact@v1
