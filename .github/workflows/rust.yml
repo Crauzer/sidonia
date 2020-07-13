@@ -25,7 +25,11 @@ jobs:
     - name: Build
       run: cargo build --release --verbose
     
-    - uses: actions/upload-artifact@v1
+    - name: smthidk
+      run: tree
+    
+    - name: Make release artifact
+      uses: actions/upload-artifact@v1
       with:
         name: sidonia-release-x86
         path: |
