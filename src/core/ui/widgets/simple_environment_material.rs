@@ -1,6 +1,6 @@
 use crate::core::{
     riot::simple_environment::{RiotSimpleEnvironmentMaterial, RiotSimpleEnvironmentMaterialFlags, RiotSimpleEnvironmentMaterialType},
-    ui::widgets::{simple_environment_channel::SimpleEnvironmentChannelWidget, Widget},
+    ui::widgets::{r3d_texture::R3dTextureWidget, simple_environment_channel::SimpleEnvironmentChannelWidget, Widget},
 };
 use imgui::Ui;
 use std::ffi::CStr;
@@ -10,7 +10,7 @@ pub struct SimpleEnvironmentMaterialWidget {
     material_type: RiotSimpleEnvironmentMaterialType,
     flags: RiotSimpleEnvironmentMaterialFlags,
     channels: Vec<SimpleEnvironmentChannelWidget>,
-    //textures: [*mut R3dTexture; 8]
+    textures: Vec<R3dTextureWidget>,
 }
 
 impl SimpleEnvironmentMaterialWidget {
@@ -20,6 +20,7 @@ impl SimpleEnvironmentMaterialWidget {
             material_type: RiotSimpleEnvironmentMaterialType::Default,
             flags: RiotSimpleEnvironmentMaterialFlags::from_bits(0).unwrap(),
             channels: Vec::with_capacity(8),
+            textures: Vec::with_capacity(8),
         }
     }
 
@@ -40,6 +41,15 @@ impl SimpleEnvironmentMaterialWidget {
             channel_widget.update(&material.channels()[i]);
             self.channels.push(channel_widget);
         }
+        for i in 0..material.textures().len() {
+            let mut texture_widget = R3dTextureWidget::new();
+
+            if let Some(texture) = material.textures()[i] {
+                texture_widget.update(texture);
+            }
+
+            self.textures.push(texture_widget);
+        }
     }
 }
 
@@ -51,6 +61,7 @@ impl Widget for SimpleEnvironmentMaterialWidget {
             let material_type = self.material_type;
             let flags = self.flags;
             let channels = &mut self.channels;
+            let textures = &mut self.textures;
             imgui::TreeNode::new(tree_node_id).build(ui, || {
                 ui.text(format!("Type: {:#?}", material_type));
                 ui.text(format!("Flags: {:#?}", flags));
@@ -58,6 +69,13 @@ impl Widget for SimpleEnvironmentMaterialWidget {
                 imgui::TreeNode::new(im_str!("Channels")).build(ui, || {
                     for channel in channels {
                         channel.render(ui);
+                    }
+                });
+                imgui::TreeNode::new(im_str!("Textures")).build(ui, || {
+                    for i in 0..textures.len() {
+                        imgui::TreeNode::new(&imgui::ImString::new(format!("{}", i))).build(ui, || {
+                            textures[i].render(ui);
+                        });
                     }
                 });
             });

@@ -4,7 +4,8 @@ use crate::core::{
     ui::{
         input_manager::InputManager,
         widgets::{
-            camera::CameraWidget, game_renderer::GameRendererWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, Widget,
+            camera::CameraWidget, game_renderer::GameRendererWidget, r3d_sun::R3dSunWidget,
+            simple_environment_asset::SimpleEnvironmentAssetWidget, Widget,
         },
     },
 };
@@ -26,6 +27,7 @@ pub struct Ui {
     game_renderer: GameRendererWidget,
     camera: CameraWidget,
     simple_environment_asset: SimpleEnvironmentAssetWidget,
+    sun: R3dSunWidget,
 }
 
 impl Ui {
@@ -42,6 +44,7 @@ impl Ui {
             game_renderer: GameRendererWidget::new(),
             camera: CameraWidget::new(),
             simple_environment_asset: SimpleEnvironmentAssetWidget::new(),
+            sun: R3dSunWidget::new(),
         }
     }
 
@@ -130,6 +133,11 @@ impl Ui {
                 if let Some(simple_envionment_asset) = game.simple_environment_asset_mut() {
                     self.simple_environment_asset.update(simple_envionment_asset);
                 }
+
+                // Update Sun widget
+                if let Some(sun) = game.sun_mut() {
+                    self.sun.update(sun);
+                }
             }
             _ => {}
         }
@@ -152,6 +160,7 @@ impl Ui {
             self.game_renderer.render(&ui);
             self.camera.render(&ui);
             self.simple_environment_asset.render(&ui);
+            self.sun.render(&ui);
 
             let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
             imgui_renderer.render(ui.render()).expect("Failed to render UI");

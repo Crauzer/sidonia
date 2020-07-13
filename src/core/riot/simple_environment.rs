@@ -2,11 +2,13 @@ use crate::core::{
     msvc::{map::StdMap, string::StdString, unique_ptr::StdUniquePtr, vector::StdVector},
     riot::{
         baked_environment::RiotBakedEnvironmentRenderer,
+        box3d::RiotBox3D,
         color::RiotColorValue,
         r3d::{
             auto_restore_texture::R3dAutoRestoreTextureSet, color::R3dColor, matrix44::R3dMatrix44, texture::R3dTexture,
             vector3::R3dVector3,
         },
+        sphere::RiotSphere,
         x3d::{index_buffer::X3dIIndexBuffer, vertex_buffer::X3dIVertexBuffer, vertex_declaration::X3dIVertexDeclaration},
     },
 };
@@ -116,7 +118,7 @@ pub struct RiotSimpleEnvironmentAsset {
     materials: StdVector<*mut RiotSimpleEnvironmentMaterial>,
     vertex_buffers: StdVector<*mut X3dIVertexBuffer>,
     index_buffers: StdVector<*mut X3dIIndexBuffer>,
-    meshes: StdVector<()>,
+    meshes: StdVector<RiotSimpleEnvironmentMesh>,
     nodes: StdVector<()>,
 }
 
@@ -148,6 +150,27 @@ pub struct RiotSimpleEnvironmentChannel {
     color: RiotColorValue,
     texture_name: [u8; 260],
     transform: R3dMatrix44,
+}
+
+#[repr(C)]
+pub struct RiotSimpleEnvironmentMesh {
+    quality: i32,
+    flags: u32,
+    bounding_sphere: RiotSphere,
+    bounding_box: RiotBox3D,
+    material: u32,
+    simple_geometry: RiotSimpleEnvironmentIndexedPrimitive,
+    complex_geometry: RiotSimpleEnvironmentIndexedPrimitive,
+}
+
+#[repr(C)]
+pub struct RiotSimpleEnvironmentIndexedPrimitive {
+    vertex_buffer: u32,
+    first_vertex: u32,
+    vertex_count: u32,
+    index_buffer: u32,
+    first_index: u32,
+    index_count: u32,
 }
 
 impl RiotSimpleEnvironmentAsset {
@@ -193,6 +216,14 @@ impl RiotSimpleEnvironmentMaterial {
     pub fn channels_mut(&mut self) -> &mut [RiotSimpleEnvironmentChannel; 8] {
         &mut self.channels
     }
+    pub fn textures(&self) -> Vec<Option<&'static R3dTexture>> {
+        unsafe {
+            self.textures
+                .iter()
+                .map(|x| x.as_ref::<'static>())
+                .collect::<Vec<Option<&'static R3dTexture>>>()
+        }
+    }
 }
 
 impl RiotSimpleEnvironmentChannel {
@@ -214,5 +245,23 @@ impl RiotSimpleEnvironmentChannel {
     }
     pub fn set_transform(&mut self, transform: R3dMatrix44) {
         self.transform = transform;
+    }
+}
+
+impl RiotSimpleEnvironmentMesh {
+    pub fn quality(&self) -> i32 {
+        self.quality
+    }
+    pub fn flags(&self) -> u32 {
+        self.flags
+    }
+    pub fn bounding_sphere(&self) -> RiotSphere {
+        self.bounding_sphere
+    }
+    pub fn bounding_box(&self) -> RiotBox3D {
+        self.bounding_box
+    }
+    pub fn material(&self) -> u32 {
+        self.material
     }
 }

@@ -1,6 +1,6 @@
 use crate::core::{
     riot::{color::RiotColorValue, simple_environment::RiotSimpleEnvironmentChannel},
-    ui::widgets::Widget,
+    ui::widgets::{r3d_texture::R3dTextureWidget, Widget},
 };
 use glam::{Mat4, Quat, Vec3};
 use imgui::Ui;
@@ -63,10 +63,7 @@ impl Widget for SimpleEnvironmentChannelWidget {
                 .preview(imgui::ColorPreview::Alpha)
                 .build(ui);
             ui.separator();
-            if imgui::CollapsingHeader::new(im_str!("Transform"))
-                .default_open(false)
-                .build(ui)
-            {
+            if imgui::CollapsingHeader::new(im_str!("Transform")).default_open(false).build(ui) {
                 ui.input_float3(im_str!("Position"), self.position.as_mut())
                     //.read_only(true)
                     .build();
@@ -77,7 +74,6 @@ impl Widget for SimpleEnvironmentChannelWidget {
                     //.read_only(true)
                     .build();
             }
-
         });
     }
 }

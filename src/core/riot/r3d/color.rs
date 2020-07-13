@@ -1,8 +1,8 @@
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct R3dColor {
-    b: u8,
-    g: u8,
-    r: u8,
-    a: u8,
+    pub b: u8,
+    pub g: u8,
+    pub r: u8,
+    pub a: u8,
 }

@@ -3,7 +3,7 @@ use crate::core::{
         ai_hero::RiotAiHero,
         game_clock::RiotGameClock,
         hud_manager::RiotHudManager,
-        r3d::{render_layer::R3dRenderLayer, scene::R3dSceneLayer},
+        r3d::{render_layer::R3dRenderLayer, scene::R3dSceneLayer, sun::R3dSun},
         render_pipeline::RiotRenderPipeline,
         simple_environment::RiotSimpleEnvironmentAsset,
     },
@@ -29,6 +29,7 @@ pub struct Game {
     scene: *mut R3dSceneLayer,
     hud_manager: *mut RiotHudManager,
     simple_environment_asset: *mut RiotSimpleEnvironmentAsset,
+    sun: *mut R3dSun,
 }
 
 impl Game {
@@ -44,6 +45,7 @@ impl Game {
         let game_clock = Game::fetch_game_clock();
         let hud_manager = Game::fetch_hud_manager();
         let simple_environment_asset = Game::fetch_simple_environment_asset();
+        let sun = Game::fetch_sun();
 
         Game {
             game_state,
@@ -53,6 +55,7 @@ impl Game {
             scene,
             hud_manager,
             simple_environment_asset,
+            sun,
         }
     }
 
@@ -70,6 +73,9 @@ impl Game {
     }
     pub fn simple_environment_asset_mut(&mut self) -> Option<&'static mut RiotSimpleEnvironmentAsset> {
         unsafe { self.simple_environment_asset.as_mut::<'static>() }
+    }
+    pub fn sun_mut(&mut self) -> Option<&'static mut R3dSun> {
+        unsafe { self.sun.as_mut::<'static>() }
     }
 
     pub fn is_renderer_initialized(&self) -> bool {
@@ -147,6 +153,13 @@ impl Game {
     fn fetch_simple_environment_asset() -> *mut RiotSimpleEnvironmentAsset {
         unsafe {
             let ptr = memory::convert_file_offset_to_ptr(0x02D78C2C) as *mut *mut RiotSimpleEnvironmentAsset;
+
+            *ptr
+        }
+    }
+    fn fetch_sun() -> *mut R3dSun {
+        unsafe {
+            let ptr = memory::convert_file_offset_to_ptr(0x02D77E70) as *mut *mut R3dSun;
 
             *ptr
         }

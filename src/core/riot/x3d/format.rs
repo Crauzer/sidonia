@@ -1,7 +1,7 @@
 use num_derive::{FromPrimitive, ToPrimitive};
 
 #[repr(u32)]
-#[derive(FromPrimitive, ToPrimitive, Debug)]
+#[derive(FromPrimitive, ToPrimitive, Debug, Copy, Clone)]
 pub enum X3dFormat {
     Unknown = 0x0,
     X8R8G8B8 = 0x1,
