@@ -29,11 +29,9 @@ jobs:
       with:
         name: sidonia-release-x86
         path: |
-          target\i686-pc-windows-msvc\release
-          !target\i686-pc-windows-msvc\release\*\*.*
-
-    - name: Checkout code
-      uses: actions/checkout@v2
+          ..\target\i686-pc-windows-msvc\release
+          !..\target\i686-pc-windows-msvc\release\*\*.*
+          
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
