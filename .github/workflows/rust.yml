@@ -29,8 +29,8 @@ jobs:
       with:
         name: sidonia-release-x86
         path: |
-          .\target\i686-pc-windows-msvc\release
-          !.\target\i686-pc-windows-msvc\release\*\*.*
+          target\i686-pc-windows-msvc\release
+          !target\i686-pc-windows-msvc\release\*\*.*
 
     - name: Checkout code
       uses: actions/checkout@v2
