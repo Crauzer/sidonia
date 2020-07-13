@@ -15,10 +15,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Set current Time as an environment variable
-      run: |
-        echo "::set-env name=NOW_TAG::$(date +'v%d%m%Y.%H%M%S')"
-        echo "::set-env name=NOW::$(date +'%d-%m-%Y-%H:%M:%S')"
+    #- name: Set current Time as an environment variable
+    #  run: |
+    #    echo "::set-env name=NOW_TAG::$(date +'v%d%m%Y.%H%M%S')"
+    #    echo "::set-env name=NOW::$(date +'%d-%m-%Y-%H:%M:%S')"
     
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
@@ -41,14 +41,12 @@ jobs:
       with:
         name: sidonia-release-x86
         path: target/i686-pc-windows-msvc/release/sidonia_core.dll
-    
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Cache
+      uses: actions/cache@v2
       with:
-          tag_name: ${{ env.NOW_TAG }}
-          release_name: Release ${{ env.NOW }}
-          draft: false
-          prerelease: false
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
