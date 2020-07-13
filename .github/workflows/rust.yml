@@ -20,6 +20,14 @@ jobs:
     #    echo "::set-env name=NOW_TAG::$(date +'v%d%m%Y.%H%M%S')"
     #    echo "::set-env name=NOW::$(date +'%d-%m-%Y-%H:%M:%S')"
     
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        target: i686-pc-windows-msvc
+        override: true
+        profile: minimal 
+    
     - name: Cache
       uses: actions/cache@v2
       with:
@@ -29,13 +37,6 @@ jobs:
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
     
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: nightly
-        target: i686-pc-windows-msvc
-        override: true
-        profile: minimal 
     - name: Build
       run: cargo build --release --verbose
     
