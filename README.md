@@ -6,7 +6,7 @@
   ____) |_| |_| |__| | |__| | |\  |_| |_ / ____ \ 
  |_____/|_____|_____/ \____/|_| \_|_____/_/    \_\
 ```
-[![GitHub license](https://img.shields.io/github/license/Crauzer/sidonia.svg?style=flat-square)](https://github.com/Crauzer/sidonia/blob/master/LICENSE) [![GitHub tag](https://img.shields.io/github/tag/Crauzer/sidonia.svg?style=flat-square)](https://GitHub.com/Crauzer/sidonia/tags/) ![](https://tokei.rs/b1/github/sidonia-420/sidonia) ![Rust](https://github.com/sidonia-420/sidonia/workflows/Rust/badge.svg) [![Discord](https://img.shields.io/discord/320848982400040960?label=Discord&style=flat-square)](https://discord.com/invite/SUHpgaF)
+[![GitHub license](https://img.shields.io/github/license/Crauzer/sidonia.svg?style=flat-square)](https://github.com/Crauzer/sidonia/blob/master/LICENSE) ![](https://tokei.rs/b1/github/sidonia-420/sidonia) ![Rust](https://github.com/sidonia-420/sidonia/workflows/Rust/badge.svg) [![Discord](https://img.shields.io/discord/320848982400040960?label=Discord&style=flat-square)](https://discord.com/invite/SUHpgaF)
 
 Sidonia is a platform for interacting with the internals of League of Legends 4.20 and for general debugging through UI, testing and just playing around.
 
