@@ -20,6 +20,12 @@ git clone https://github.com/Crauzer/sidonia
 cd sidonia
 ```
 ---
+* Install `i686-pc-windows-msvc` target (Optional if already installed)
+```
+rustup target add i686-pc-windows-msvc
+```
+
+---
 * Build the core
 ```
 cargo build --release
