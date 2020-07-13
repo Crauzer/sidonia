@@ -32,7 +32,7 @@ cd sidonia\target\i686-pc-windows-msvc\release
 cargo run
 ```
 
-*You can also build with the `debug` profile, in that case you need to set the working directory for the loader to `sidonia\target\i686-pc-windows-msvc\debug`*
+*You can also build with the `debug` profile, in that case you need to remove the `--release` flag from the `cargo build` command and set the working directory for the loader to `sidonia\target\i686-pc-windows-msvc\debug`*
 
 *Running the loader before the game starts can cause in-game issues or potential crashes, it is recommended to run the loader while the game is running*
 
