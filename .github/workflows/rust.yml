@@ -25,12 +25,12 @@ jobs:
     - name: Build
       run: cargo build --release --verbose
     
-    - name: Make release artifact
+    - name: Upload release artifact
       uses: actions/upload-artifact@v1
       with:
         name: sidonia-release-x86
-        path: target/i686-pc-windows-msvc/release/sidonia_core.dll
-          
+        path: target/i686-pc-windows-msvc/release/*.*
+    
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
