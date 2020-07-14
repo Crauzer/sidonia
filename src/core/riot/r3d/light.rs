@@ -40,9 +40,9 @@ pub struct R3dLight {
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive)]
 pub enum R3dLightType {
-    MaybePoint = 0,
-    Sun = 1,
-    Unknown2 = 2,
+    Point = 0,
+    Directional = 1,
+    Unknown = 2,
 }
 
 impl R3dLight {

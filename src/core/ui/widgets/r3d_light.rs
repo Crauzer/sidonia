@@ -44,7 +44,7 @@ impl R3dLightWidget {
             flags: 0,
             bounding_box: RiotBox3D::new(R3dVector3::zero(), R3dVector3::zero()),
             intensity: 0.0,
-            light_type: R3dLightType::MaybePoint,
+            light_type: R3dLightType::Point,
             radius1: 0.0,
             radius2: 0.0,
             r_tmp: 0.0,
@@ -121,9 +121,9 @@ impl Widget for R3dLightWidget {
         ui.input_float(im_str!("Intensity"), &mut self.intensity).build();
 
         let mut current_type = self.light_type.to_usize().or(Some(0)).unwrap();
-        let light_types = [im_str!("MaybePoint"), im_str!("Sun"), im_str!("Unknown2")];
+        let light_types = [im_str!("Point"), im_str!("Directional"), im_str!("Unknown")];
         if imgui::ComboBox::new(im_str!("Type")).build_simple_string(ui, &mut current_type, &light_types) {
-            self.light_type = R3dLightType::from_usize(current_type).or(Some(R3dLightType::MaybePoint)).unwrap();
+            self.light_type = R3dLightType::from_usize(current_type).or(Some(R3dLightType::Point)).unwrap();
         }
 
         ui.input_float(im_str!("Inner Radius"), &mut self.radius1).build();
@@ -143,9 +143,9 @@ impl Widget for R3dLightWidget {
         ui.input_float3(im_str!("Direction"), &mut self.direction).build();
         ui.input_float(im_str!("Spot Angle"), &mut self.spot_angle).build();
         ui.input_float(im_str!("Falloff Angle"), &mut self.falloff_angle).build();
-        ui.text(format!("Attribute 1: {}", self.attribute1));
-        ui.text(format!("Attribute 2: {}", self.attribute2));
-        ui.text(format!("Attribute 3: {}", self.attribute3));
+        ui.text(format!("Attribute 1: {:#?}", self.attribute1));
+        ui.text(format!("Attribute 2: {:#?}", self.attribute2));
+        ui.text(format!("Attribute 3: {:#?}", self.attribute3));
         ui.text(format!("Is Local: {}", self.is_local_light));
         ui.text(format!("Shadow Index: {}", self.shadow_index));
         ui.text(format!("Update Key: {}", self.update_key));
