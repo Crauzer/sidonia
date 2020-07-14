@@ -27,6 +27,9 @@ pub struct RiotHudManager {
 }
 
 impl RiotHudManager {
+    pub fn camera_logic(&self) -> Option<&'static RiotCameraLogic> {
+        unsafe { self.camera_logic.as_ref::<'static>() }
+    }
     pub fn camera_logic_mut(&mut self) -> Option<&'static mut RiotCameraLogic> {
         unsafe { self.camera_logic.as_mut::<'static>() }
     }

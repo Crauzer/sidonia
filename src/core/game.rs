@@ -62,17 +62,35 @@ impl Game {
     pub fn game_clock(&self) -> Option<&'static RiotGameClock> {
         unsafe { self.game_clock.as_ref::<'static>() }
     }
+    pub fn game_clock_mut(&mut self) -> Option<&'static mut RiotGameClock> {
+        unsafe { self.game_clock.as_mut::<'static>() }
+    }
+    pub fn renderer(&self) -> Option<&'static R3dRenderLayer> {
+        unsafe { self.renderer.as_ref::<'static>() }
+    }
     pub fn renderer_mut(&mut self) -> Option<&'static mut R3dRenderLayer> {
         unsafe { self.renderer.as_mut::<'static>() }
+    }
+    pub fn scene(&self) -> Option<&'static R3dSceneLayer> {
+        unsafe { self.scene.as_ref::<'static>() }
     }
     pub fn scene_mut(&mut self) -> Option<&'static mut R3dSceneLayer> {
         unsafe { self.scene.as_mut::<'static>() }
     }
+    pub fn hud_manager(&self) -> Option<&'static RiotHudManager> {
+        unsafe { self.hud_manager.as_ref::<'static>() }
+    }
     pub fn hud_manager_mut(&mut self) -> Option<&'static mut RiotHudManager> {
         unsafe { self.hud_manager.as_mut::<'static>() }
     }
+    pub fn simple_environment_asset(&self) -> Option<&'static RiotSimpleEnvironmentAsset> {
+        unsafe { self.simple_environment_asset.as_ref::<'static>() }
+    }
     pub fn simple_environment_asset_mut(&mut self) -> Option<&'static mut RiotSimpleEnvironmentAsset> {
         unsafe { self.simple_environment_asset.as_mut::<'static>() }
+    }
+    pub fn sun(&self) -> Option<&'static R3dSun> {
+        unsafe { self.sun.as_ref::<'static>() }
     }
     pub fn sun_mut(&mut self) -> Option<&'static mut R3dSun> {
         unsafe { self.sun.as_mut::<'static>() }

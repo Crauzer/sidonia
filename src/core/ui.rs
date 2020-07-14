@@ -4,7 +4,7 @@ use crate::core::{
     ui::{
         input_manager::InputManager,
         widgets::{
-            camera::CameraWidget, game_renderer::GameRendererWidget, r3d_sun::R3dSunWidget,
+            camera::CameraWidget, game_renderer::GameRendererWidget, main_window::MainWindowWidget, r3d_sun::R3dSunWidget,
             simple_environment_asset::SimpleEnvironmentAssetWidget, Widget,
         },
     },
@@ -24,10 +24,7 @@ pub struct Ui {
     imgui_renderer: Option<imgui_dx9_renderer::Renderer>,
     input_manager: Option<InputManager>,
 
-    game_renderer: GameRendererWidget,
-    camera: CameraWidget,
-    simple_environment_asset: SimpleEnvironmentAssetWidget,
-    sun: R3dSunWidget,
+    main_window: MainWindowWidget,
 }
 
 impl Ui {
@@ -41,10 +38,7 @@ impl Ui {
             imgui_renderer: None,
             input_manager: None,
 
-            game_renderer: GameRendererWidget::new(),
-            camera: CameraWidget::new(),
-            simple_environment_asset: SimpleEnvironmentAssetWidget::new(),
-            sun: R3dSunWidget::new(),
+            main_window: MainWindowWidget::new(),
         }
     }
 
@@ -95,23 +89,10 @@ impl Ui {
     }
 
     pub fn fetch_data(&self, game: &mut Game) {
-        if let Some(game_renderer) = game.renderer_mut() {
-            self.game_renderer.fetch_data(game_renderer);
-        }
-        if let Some(hud_manager) = game.hud_manager_mut() {
-            if let Some(camera_logic) = hud_manager.camera_logic_mut() {
-                self.camera.fetch_data(camera_logic);
-            }
-        }
-        if let Some(simple_environment_asset) = game.simple_environment_asset_mut() {
-            self.simple_environment_asset.fetch_data(simple_environment_asset);
-        }
-        if let Some(sun) = game.sun_mut() {
-            self.sun.fetch_data(sun);
-        }
+        self.main_window.fetch_data(game);
     }
 
-    pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {
+    pub fn update(&mut self, game: &Game, d3d9_device: &mut X3dD3d9Device) {
         match (game.is_renderer_initialized(), self.is_imgui_initialized()) {
             // Game renderer is initialized so we also initialize our UI renderer
             (true, false) => {
@@ -119,28 +100,7 @@ impl Ui {
             }
             // Both the Game renderer and our renderer are initialized, do update
             (true, true) => {
-                // Update Game Renderer Widget
-                if let Some(game_renderer) = game.renderer_mut() {
-                    self.game_renderer.update(game_renderer);
-                }
-
-                // Update Hud Manager Widgets
-                if let Some(hud_manager) = game.hud_manager_mut() {
-                    // Update Camera Widget
-                    if let Some(camera_logic) = hud_manager.camera_logic_mut() {
-                        self.camera.update(camera_logic);
-                    }
-                }
-
-                // Update Simple Environment Widget
-                if let Some(simple_envionment_asset) = game.simple_environment_asset_mut() {
-                    self.simple_environment_asset.update(simple_envionment_asset);
-                }
-
-                // Update Sun widget
-                if let Some(sun) = game.sun_mut() {
-                    self.sun.update(sun);
-                }
+                self.main_window.update(game);
             }
             _ => {}
         }
@@ -150,20 +110,7 @@ impl Ui {
         if self.is_imgui_initialized() {
             let ui = self.imgui_context.frame();
 
-            // Main window
-            imgui::Window::new(im_str!("Sidonia"))
-                .size([300.0, 300.0], imgui::Condition::FirstUseEver)
-                .build(&ui, || {
-                    ui.text(im_str!("EndScene Hook"));
-                    ui.separator();
-                    let mouse_pos = ui.io().mouse_pos;
-                    ui.text(format!("Mouse Position: ({:.1},{:.1})", mouse_pos[0], mouse_pos[1]));
-                });
-
-            self.game_renderer.render(&ui);
-            self.camera.render(&ui);
-            self.simple_environment_asset.render(&ui);
-            self.sun.render(&ui);
+            self.main_window.render(&ui);
 
             let imgui_renderer = self.imgui_renderer.as_mut().unwrap();
             imgui_renderer.render(ui.render()).expect("Failed to render UI");
