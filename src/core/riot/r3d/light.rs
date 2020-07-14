@@ -64,4 +64,8 @@ impl R3dLight {
     pub fn project_map(&self) -> Option<&'static R3dTexture> {
         unsafe { self.project_map.as_ref::<'static>() }
     }
+
+    pub fn set_is_local_light(&mut self, is_local_light: bool) {
+        self.is_local_light = is_local_light as i32;
+    }
 }

@@ -78,6 +78,7 @@ impl R3dLightWidget {
         light.direction = R3dVector3::from(self.direction);
         light.spot_angle = self.spot_angle;
         light.falloff_angle = self.falloff_angle;
+        light.set_is_local_light(self.is_local_light);
     }
 
     pub fn update(&mut self, light: &R3dLight) {
@@ -146,7 +147,7 @@ impl Widget for R3dLightWidget {
         ui.text(format!("Attribute 1: {:#?}", self.attribute1));
         ui.text(format!("Attribute 2: {:#?}", self.attribute2));
         ui.text(format!("Attribute 3: {:#?}", self.attribute3));
-        ui.text(format!("Is Local: {}", self.is_local_light));
+        ui.checkbox(im_str!("Is Local"), &mut self.is_local_light);
         ui.text(format!("Shadow Index: {}", self.shadow_index));
         ui.text(format!("Update Key: {}", self.update_key));
     }
