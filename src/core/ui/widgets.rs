@@ -54,18 +54,11 @@ impl<T: Widget> OpenableWidget<T> {
             OpenableWidgetState::Closed => self.state = OpenableWidgetState::Open,
         }
     }
-}
 
-impl<T: Widget> Deref for OpenableWidget<T> {
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
+    pub fn widget(&self) -> &T {
         &self.widget
     }
-}
-
-impl<T: Widget> DerefMut for OpenableWidget<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
+    pub fn widget_mut(&mut self) -> &mut T {
         &mut self.widget
     }
 }
