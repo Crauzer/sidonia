@@ -106,6 +106,9 @@ impl Ui {
         if let Some(simple_environment_asset) = game.simple_environment_asset_mut() {
             self.simple_environment_asset.fetch_data(simple_environment_asset);
         }
+        if let Some(sun) = game.sun_mut() {
+            self.sun.fetch_data(sun);
+        }
     }
 
     pub fn update(&mut self, game: &mut Game, d3d9_device: &mut X3dD3d9Device) {

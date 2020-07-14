@@ -4,6 +4,7 @@ use crate::core::riot::{
     box3d::RiotBox3D,
     r3d::{texture::R3dTexture, vector3::R3dVector3},
 };
+use num_derive::{FromPrimitive, ToPrimitive};
 
 #[repr(C)]
 #[derive(Debug)]
@@ -13,7 +14,7 @@ pub struct R3dLight {
     next: *mut R3dLight,
     bounding_box: RiotBox3D,
     pub intensity: f32,
-    light_type: u32,
+    pub light_type: R3dLightType,
     pub radius1: f32,
     pub radius2: f32,
     r_tmp: f32,
@@ -36,15 +37,20 @@ pub struct R3dLight {
     project_map: *mut R3dTexture,
 }
 
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, FromPrimitive, ToPrimitive)]
+pub enum R3dLightType {
+    MaybePoint = 0,
+    Sun = 1,
+    Unknown2 = 2,
+}
+
 impl R3dLight {
     pub fn flags(&self) -> u32 {
         self.flags
     }
     pub fn boounding_box(&self) -> RiotBox3D {
         self.bounding_box
-    }
-    pub fn light_type(&self) -> u32 {
-        self.light_type
     }
     pub fn r_tmp(&self) -> f32 {
         self.r_tmp

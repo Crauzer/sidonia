@@ -1,5 +1,5 @@
 use crate::core::{
-    riot::r3d::sun::R3dSun,
+    riot::r3d::{color::R3dColor, sun::R3dSun},
     ui::widgets::{r3d_light::R3dLightWidget, Widget},
 };
 use imgui::Ui;
@@ -17,6 +17,11 @@ impl R3dSunWidget {
             ambient_color: [0.0, 0.0, 0.0, 0.0],
             light_widget: R3dLightWidget::new(),
         }
+    }
+
+    pub fn fetch_data(&self, sun: &mut R3dSun) {
+        sun.ambient_color = R3dColor::from_rgba(self.ambient_color);
+        self.light_widget.fetch_data(sun.light_mut());
     }
 
     pub fn update(&mut self, sun: &R3dSun) {

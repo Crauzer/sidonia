@@ -1,11 +1,16 @@
 use crate::core::{
     riot::{
         box3d::RiotBox3D,
-        r3d::{light::R3dLight, texture::R3dTexture, vector3::R3dVector3},
+        r3d::{
+            light::{R3dLight, R3dLightType},
+            texture::R3dTexture,
+            vector3::R3dVector3,
+        },
     },
     ui::widgets::Widget,
 };
 use imgui::Ui;
+use num_traits::{FromPrimitive, ToPrimitive};
 use std::ptr;
 use winapi::shared::minwindef::LPVOID;
 
@@ -14,7 +19,7 @@ pub struct R3dLightWidget {
     flags: u32,
     bounding_box: RiotBox3D,
     intensity: f32,
-    light_type: u32,
+    light_type: R3dLightType,
     radius1: f32,
     radius2: f32,
     r_tmp: f32,
@@ -39,7 +44,7 @@ impl R3dLightWidget {
             flags: 0,
             bounding_box: RiotBox3D::new(R3dVector3::zero(), R3dVector3::zero()),
             intensity: 0.0,
-            light_type: 0,
+            light_type: R3dLightType::MaybePoint,
             radius1: 0.0,
             radius2: 0.0,
             r_tmp: 0.0,
@@ -58,12 +63,29 @@ impl R3dLightWidget {
         }
     }
 
+    pub fn fetch_data(&self, light: &mut R3dLight) {
+        light.position = R3dVector3::from(self.position);
+        light.intensity = self.intensity;
+        light.light_type = self.light_type;
+        light.radius1 = self.radius1;
+        light.radius2 = self.radius2;
+        light.r = self.color1[0] * 255.0;
+        light.g = self.color1[1] * 255.0;
+        light.b = self.color1[2] * 255.0;
+        light.r2 = self.color2[0] * 255.0;
+        light.g2 = self.color2[1] * 255.0;
+        light.b2 = self.color2[2] * 255.0;
+        light.direction = R3dVector3::from(self.direction);
+        light.spot_angle = self.spot_angle;
+        light.falloff_angle = self.falloff_angle;
+    }
+
     pub fn update(&mut self, light: &R3dLight) {
         self.position = light.position.into();
         self.flags = light.flags();
         self.bounding_box = light.boounding_box();
         self.intensity = light.intensity;
-        self.light_type = light.light_type();
+        self.light_type = light.light_type;
         self.radius1 = light.radius1;
         self.radius2 = light.radius2;
         self.r_tmp = light.r_tmp();
@@ -97,7 +119,13 @@ impl Widget for R3dLightWidget {
         }
 
         ui.input_float(im_str!("Intensity"), &mut self.intensity).build();
-        ui.text(format!("Type: {}", self.light_type));
+
+        let mut current_type = self.light_type.to_usize().or(Some(0)).unwrap();
+        let light_types = [im_str!("MaybePoint"), im_str!("Sun"), im_str!("Unknown2")];
+        if imgui::ComboBox::new(im_str!("Type")).build_simple_string(ui, &mut current_type, &light_types) {
+            self.light_type = R3dLightType::from_usize(current_type).or(Some(R3dLightType::MaybePoint)).unwrap();
+        }
+
         ui.input_float(im_str!("Inner Radius"), &mut self.radius1).build();
         ui.input_float(im_str!("Outer Radius"), &mut self.radius2).build();
         ui.input_float(im_str!("r_tmp"), &mut self.r_tmp).build();
