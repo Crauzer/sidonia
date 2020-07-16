@@ -40,7 +40,6 @@ impl Widget for R3dLightSystemWidget {
             .always_auto_resize(true)
             .build(&ui, || {
                 ui.text(format!("Light Count: {}", self.lights.len()));
-
                 imgui::TreeNode::new(im_str!("Lights")).build(ui, || {
                     for i in 0..self.lights.len() {
                         imgui::TreeNode::new(&imgui::ImString::new(format!("{}", i))).build(ui, || {
@@ -49,6 +48,7 @@ impl Widget for R3dLightSystemWidget {
                     }
                 });
 
+                ui.text(format!("Visible Light Count: {}", self.visible_lights.len()));
                 imgui::TreeNode::new(im_str!("Visible Lights")).build(ui, || {
                     for i in 0..self.visible_lights.len() {
                         imgui::TreeNode::new(&imgui::ImString::new(format!("{}", i))).build(ui, || {
