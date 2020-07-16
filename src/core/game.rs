@@ -3,7 +3,7 @@ use crate::core::{
         ai_hero::RiotAiHero,
         game_clock::RiotGameClock,
         hud_manager::RiotHudManager,
-        r3d::{render_layer::R3dRenderLayer, scene::R3dSceneLayer, sun::R3dSun},
+        r3d::{light_system::R3dLightSystem, render_layer::R3dRenderLayer, scene::R3dSceneLayer, sun::R3dSun},
         render_pipeline::RiotRenderPipeline,
         simple_environment::RiotSimpleEnvironmentAsset,
     },
@@ -30,6 +30,7 @@ pub struct Game {
     hud_manager: *mut RiotHudManager,
     simple_environment_asset: *mut RiotSimpleEnvironmentAsset,
     sun: *mut R3dSun,
+    world_light_system: *mut R3dLightSystem,
 }
 
 impl Game {
@@ -46,6 +47,7 @@ impl Game {
         let hud_manager = Game::fetch_hud_manager();
         let simple_environment_asset = Game::fetch_simple_environment_asset();
         let sun = Game::fetch_sun();
+        let world_light_system = Game::fetch_world_light_system();
 
         Game {
             game_state,
@@ -56,44 +58,51 @@ impl Game {
             hud_manager,
             simple_environment_asset,
             sun,
+            world_light_system,
         }
     }
 
-    pub fn game_clock(&self) -> Option<&'static RiotGameClock> {
-        unsafe { self.game_clock.as_ref::<'static>() }
+    pub fn game_clock(&self) -> Option<&RiotGameClock> {
+        unsafe { self.game_clock.as_ref() }
     }
-    pub fn game_clock_mut(&mut self) -> Option<&'static mut RiotGameClock> {
-        unsafe { self.game_clock.as_mut::<'static>() }
+    pub fn game_clock_mut(&mut self) -> Option<&mut RiotGameClock> {
+        unsafe { self.game_clock.as_mut() }
     }
-    pub fn renderer(&self) -> Option<&'static R3dRenderLayer> {
-        unsafe { self.renderer.as_ref::<'static>() }
+    pub fn renderer(&self) -> Option<&R3dRenderLayer> {
+        unsafe { self.renderer.as_ref() }
     }
-    pub fn renderer_mut(&mut self) -> Option<&'static mut R3dRenderLayer> {
-        unsafe { self.renderer.as_mut::<'static>() }
+    pub fn renderer_mut(&mut self) -> Option<&mut R3dRenderLayer> {
+        unsafe { self.renderer.as_mut() }
     }
-    pub fn scene(&self) -> Option<&'static R3dSceneLayer> {
-        unsafe { self.scene.as_ref::<'static>() }
+    pub fn scene(&self) -> Option<&R3dSceneLayer> {
+        unsafe { self.scene.as_ref() }
     }
-    pub fn scene_mut(&mut self) -> Option<&'static mut R3dSceneLayer> {
-        unsafe { self.scene.as_mut::<'static>() }
+    pub fn scene_mut(&mut self) -> Option<&mut R3dSceneLayer> {
+        unsafe { self.scene.as_mut() }
     }
-    pub fn hud_manager(&self) -> Option<&'static RiotHudManager> {
-        unsafe { self.hud_manager.as_ref::<'static>() }
+    pub fn hud_manager(&self) -> Option<&RiotHudManager> {
+        unsafe { self.hud_manager.as_ref() }
     }
-    pub fn hud_manager_mut(&mut self) -> Option<&'static mut RiotHudManager> {
-        unsafe { self.hud_manager.as_mut::<'static>() }
+    pub fn hud_manager_mut(&mut self) -> Option<&mut RiotHudManager> {
+        unsafe { self.hud_manager.as_mut() }
     }
-    pub fn simple_environment_asset(&self) -> Option<&'static RiotSimpleEnvironmentAsset> {
-        unsafe { self.simple_environment_asset.as_ref::<'static>() }
+    pub fn simple_environment_asset(&self) -> Option<&RiotSimpleEnvironmentAsset> {
+        unsafe { self.simple_environment_asset.as_ref() }
     }
-    pub fn simple_environment_asset_mut(&mut self) -> Option<&'static mut RiotSimpleEnvironmentAsset> {
-        unsafe { self.simple_environment_asset.as_mut::<'static>() }
+    pub fn simple_environment_asset_mut(&mut self) -> Option<&mut RiotSimpleEnvironmentAsset> {
+        unsafe { self.simple_environment_asset.as_mut() }
     }
-    pub fn sun(&self) -> Option<&'static R3dSun> {
-        unsafe { self.sun.as_ref::<'static>() }
+    pub fn sun(&self) -> Option<&R3dSun> {
+        unsafe { self.sun.as_ref() }
     }
-    pub fn sun_mut(&mut self) -> Option<&'static mut R3dSun> {
-        unsafe { self.sun.as_mut::<'static>() }
+    pub fn sun_mut(&mut self) -> Option<&mut R3dSun> {
+        unsafe { self.sun.as_mut() }
+    }
+    pub fn world_light_system(&self) -> Option<&R3dLightSystem> {
+        unsafe { self.world_light_system.as_ref() }
+    }
+    pub fn world_light_system_mut(&mut self) -> Option<&mut R3dLightSystem> {
+        unsafe { self.world_light_system.as_mut() }
     }
 
     pub fn is_renderer_initialized(&self) -> bool {
@@ -181,5 +190,8 @@ impl Game {
 
             *ptr
         }
+    }
+    fn fetch_world_light_system() -> *mut R3dLightSystem {
+        unsafe { memory::convert_file_offset_to_ptr(0x014C7F40) as *mut R3dLightSystem }
     }
 }

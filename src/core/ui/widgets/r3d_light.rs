@@ -29,9 +29,9 @@ pub struct R3dLightWidget {
     direction: [f32; 3],
     spot_angle: f32,
     falloff_angle: f32,
-    attribute1: u32,
-    attribute2: u32,
-    attribute3: u32,
+    attribute1: f32,
+    attribute2: f32,
+    attribute3: f32,
     is_local_light: bool,
     shadow_index: i32,
     update_key: i32,
@@ -54,9 +54,9 @@ impl R3dLightWidget {
             direction: [0.0, 0.0, 0.0],
             spot_angle: 0.0,
             falloff_angle: 0.0,
-            attribute1: 0,
-            attribute2: 0,
-            attribute3: 0,
+            attribute1: 0.0,
+            attribute2: 0.0,
+            attribute3: 0.0,
             is_local_light: false,
             shadow_index: 0,
             update_key: 0,
@@ -78,6 +78,9 @@ impl R3dLightWidget {
         light.direction = R3dVector3::from(self.direction);
         light.spot_angle = self.spot_angle;
         light.falloff_angle = self.falloff_angle;
+        light.attribute1 = self.attribute1;
+        light.attribute2 = self.attribute2;
+        light.attribute3 = self.attribute3;
         light.set_is_local_light(self.is_local_light);
     }
 
@@ -144,11 +147,19 @@ impl Widget for R3dLightWidget {
         ui.input_float3(im_str!("Direction"), &mut self.direction).build();
         ui.input_float(im_str!("Spot Angle"), &mut self.spot_angle).build();
         ui.input_float(im_str!("Falloff Angle"), &mut self.falloff_angle).build();
-        ui.text(format!("Attribute 1: {:#?}", self.attribute1));
-        ui.text(format!("Attribute 2: {:#?}", self.attribute2));
-        ui.text(format!("Attribute 3: {:#?}", self.attribute3));
+        ui.input_float(im_str!("Attribute 1"), &mut self.attribute1).build();
+        ui.input_float(im_str!("Attribute 2"), &mut self.attribute2).build();
+        ui.input_float(im_str!("Attribute 3"), &mut self.attribute3).build();
         ui.checkbox(im_str!("Is Local"), &mut self.is_local_light);
         ui.text(format!("Shadow Index: {}", self.shadow_index));
         ui.text(format!("Update Key: {}", self.update_key));
+    }
+}
+
+impl From<&R3dLight> for R3dLightWidget {
+    fn from(light: &R3dLight) -> Self {
+        let mut widget = R3dLightWidget::new();
+        widget.update(light);
+        widget
     }
 }

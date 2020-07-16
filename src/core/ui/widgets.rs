@@ -9,6 +9,7 @@ pub mod game_renderer_camera;
 pub mod game_renderer_stats;
 pub mod main_window;
 pub mod r3d_light;
+pub mod r3d_light_system;
 pub mod r3d_sun;
 pub mod r3d_texture;
 pub mod simple_environment_asset;

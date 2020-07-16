@@ -4,6 +4,7 @@ pub mod camera;
 pub mod color;
 pub mod color_format;
 pub mod light;
+pub mod light_system;
 pub mod matrix44;
 pub mod plane;
 pub mod render_layer;

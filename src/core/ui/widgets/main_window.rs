@@ -1,8 +1,9 @@
 use crate::core::{
     game::Game,
+    riot::r3d::light_system::R3dLightSystem,
     ui::widgets::{
-        camera::CameraWidget, game_renderer::GameRendererWidget, r3d_sun::R3dSunWidget,
-        simple_environment_asset::SimpleEnvironmentAssetWidget, OpenableWidget, OpenableWidgetState, Widget,
+        camera::CameraWidget, game_renderer::GameRendererWidget, r3d_light::R3dLightWidget, r3d_light_system::R3dLightSystemWidget,
+        r3d_sun::R3dSunWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, OpenableWidget, OpenableWidgetState, Widget,
     },
 };
 use imgui::Ui;
@@ -12,6 +13,7 @@ pub struct MainWindowWidget {
     camera_widget: OpenableWidget<CameraWidget>,
     simple_environment_asset_widget: OpenableWidget<SimpleEnvironmentAssetWidget>,
     sun_widget: OpenableWidget<R3dSunWidget>,
+    world_light_system_widget: OpenableWidget<R3dLightSystemWidget>,
 }
 
 impl MainWindowWidget {
@@ -21,6 +23,7 @@ impl MainWindowWidget {
             camera_widget: OpenableWidget::new(CameraWidget::new()),
             simple_environment_asset_widget: OpenableWidget::new(SimpleEnvironmentAssetWidget::new()),
             sun_widget: OpenableWidget::new(R3dSunWidget::new()),
+            world_light_system_widget: OpenableWidget::new(R3dLightSystemWidget::new()),
         }
     }
 
@@ -38,6 +41,10 @@ impl MainWindowWidget {
         }
         if let Some(sun) = game.sun_mut() {
             self.sun_widget.widget().fetch_data(sun);
+        }
+
+        if let Some(world_light_system) = game.world_light_system_mut() {
+            self.world_light_system_widget.widget().fetch_data(world_light_system);
         }
     }
 
@@ -63,6 +70,10 @@ impl MainWindowWidget {
         // Update Sun widget
         if let Some(sun) = game.sun() {
             self.sun_widget.widget_mut().update(sun);
+        }
+
+        if let Some(world_light_system) = game.world_light_system() {
+            self.world_light_system_widget.widget_mut().update(world_light_system);
         }
     }
 }
@@ -93,6 +104,9 @@ impl Widget for MainWindowWidget {
                 if ui.button(im_str!("Sun"), [200.0, 30.0]) {
                     self.sun_widget.flip_state();
                 }
+                if ui.button(im_str!("World Light System"), [200.0, 30.0]) {
+                    self.world_light_system_widget.flip_state();
+                }
 
                 if self.game_renderer_widget.state() == OpenableWidgetState::Open {
                     self.game_renderer_widget.widget_mut().render(ui);
@@ -105,6 +119,9 @@ impl Widget for MainWindowWidget {
                 }
                 if self.sun_widget.state() == OpenableWidgetState::Open {
                     self.sun_widget.widget_mut().render(ui);
+                }
+                if self.world_light_system_widget.state() == OpenableWidgetState::Open {
+                    self.world_light_system_widget.widget_mut().render(ui);
                 }
             });
     }
