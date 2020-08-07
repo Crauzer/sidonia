@@ -120,7 +120,7 @@ impl Game {
 
     pub fn update(&mut self) -> GameState {
         // Update Game State
-        let new_game_state = Game::fetch_game_state();
+        let new_game_state = unsafe { *globals::fetch_global(globals::GAME_STATE) };
         if new_game_state != self.game_state {
             log::info!("Switching to GameState: {:#?}", new_game_state);
 
