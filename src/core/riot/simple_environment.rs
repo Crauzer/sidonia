@@ -1,5 +1,5 @@
 use crate::core::{
-    msvc::{map::StdMap, string::StdString, smart_pointers::StdUniquePtr, vector::StdVector},
+    msvc::{map::StdMap, smart_pointers::StdUniquePtr, string::StdString, vector::StdVector},
     riot::{
         baked_environment::RiotBakedEnvironmentRenderer,
         box3d::RiotBox3D,

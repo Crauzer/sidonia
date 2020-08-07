@@ -1,15 +1,16 @@
 use crate::process::Process;
 use std::{env, ffi::CString, mem, path::Path, ptr};
-use winapi::um::{
-    handleapi::CloseHandle,
-    libloaderapi::{GetModuleHandleA, GetProcAddress},
-    minwinbase::LPTHREAD_START_ROUTINE,
-    processthreadsapi::CreateRemoteThread,
+use winapi::{
+    shared::minwindef::{HMODULE, MAX_PATH},
+    um::{
+        handleapi::CloseHandle,
+        libloaderapi::{FreeLibrary, GetModuleFileNameA, GetModuleHandleA, GetProcAddress},
+        minwinbase::LPTHREAD_START_ROUTINE,
+        processthreadsapi::CreateRemoteThread,
+        psapi::{EnumProcessModules, GetModuleFileNameExA},
+        winnt::{CHAR, WCHAR},
+    },
 };
-use winapi::um::libloaderapi::{FreeLibrary, GetModuleFileNameA};
-use winapi::shared::minwindef::{HMODULE, MAX_PATH};
-use winapi::um::psapi::{EnumProcessModules, GetModuleFileNameExA};
-use winapi::um::winnt::{WCHAR, CHAR};
 
 mod process;
 
@@ -27,7 +28,6 @@ fn main() {
     }
 }
 unsafe fn inject_core(process: &Process) {
-
     // Get LoadLibrary from kernel32
     let load_library_fn = GetProcAddress(
         GetModuleHandleA(b"kernel32.dll\0".as_ptr().cast()),

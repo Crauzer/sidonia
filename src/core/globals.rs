@@ -1,6 +1,6 @@
-use winapi::shared::minwindef::LPVOID;
 use crate::core::utilities::memory;
 use std::mem;
+use winapi::shared::minwindef::LPVOID;
 
 pub const GAME_STATE: u32 = 0x02D788D4;
 pub const GAME_CLOCK: u32 = 0x02D791A8;

@@ -1,11 +1,15 @@
-use crate::core::{riot::{
-    ai_hero::RiotAiHero,
-    game_clock::RiotGameClock,
-    hud_manager::RiotHudManager,
-    r3d::{light_system::R3dLightSystem, render_layer::R3dRenderLayer, scene::R3dSceneLayer, sun::R3dSun},
-    render_pipeline::RiotRenderPipeline,
-    simple_environment::RiotSimpleEnvironmentAsset,
-}, utilities::memory, globals};
+use crate::core::{
+    globals,
+    riot::{
+        ai_hero::RiotAiHero,
+        game_clock::RiotGameClock,
+        hud_manager::RiotHudManager,
+        r3d::{light_system::R3dLightSystem, render_layer::R3dRenderLayer, scene::R3dSceneLayer, sun::R3dSun},
+        render_pipeline::RiotRenderPipeline,
+        simple_environment::RiotSimpleEnvironmentAsset,
+    },
+    utilities::memory,
+};
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]

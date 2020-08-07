@@ -1,6 +1,5 @@
 use crate::core::{riot::x3d::d3d9::device::X3dD3d9Device, utilities::memory};
-use detour::{static_detour, Function};
-use detour::StaticDetour;
+use detour::{static_detour, Function, StaticDetour};
 use std::{error::Error, mem};
 use winapi::{
     ctypes::c_int,

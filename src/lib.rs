@@ -16,14 +16,20 @@ extern crate imgui;
 extern crate bitflags;
 
 use crate::core::{utilities::logging, Core, CoreStatus};
-use std::{ptr, sync::{Arc, Mutex}, thread};
-use winapi::{
-    shared::minwindef::{BOOL, DWORD, HINSTANCE, LPVOID, TRUE},
-    um::{libloaderapi::DisableThreadLibraryCalls, processthreadsapi::CreateThread, winnt},
+use std::{
+    ptr,
+    sync::{Arc, Mutex},
+    thread,
 };
-use winapi::um::libloaderapi::FreeLibraryAndExitThread;
-use winapi::_core::time::Duration;
-use winapi::shared::minwindef::HMODULE;
+use winapi::{
+    _core::time::Duration,
+    shared::minwindef::{BOOL, DWORD, HINSTANCE, HMODULE, LPVOID, TRUE},
+    um::{
+        libloaderapi::{DisableThreadLibraryCalls, FreeLibraryAndExitThread},
+        processthreadsapi::CreateThread,
+        winnt,
+    },
+};
 
 pub mod core;
 
@@ -37,7 +43,7 @@ pub unsafe extern "system" fn DllMain(dll_module: HINSTANCE, call_reason: DWORD,
             CreateThread(ptr::null_mut(), 0, Some(initialize), ptr::null_mut(), 0, ptr::null_mut());
 
             TRUE
-        },
+        }
         winnt::DLL_PROCESS_DETACH => {
             if let Some(core) = CORE.as_mut() {
                 let mut core = core.lock().unwrap();
@@ -48,7 +54,7 @@ pub unsafe extern "system" fn DllMain(dll_module: HINSTANCE, call_reason: DWORD,
             FreeLibraryAndExitThread(dll_module, 1);
 
             TRUE
-        },
+        }
         _ => TRUE,
     }
 }
@@ -67,7 +73,7 @@ pub unsafe extern "system" fn initialize(lp_thread_parameter: LPVOID) -> u32 {
             match core.status() {
                 CoreStatus::Exit => {
                     break;
-                },
+                }
                 _ => {}
             }
         }

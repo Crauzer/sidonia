@@ -15,24 +15,24 @@ pub mod d3d9;
 pub mod detours;
 pub mod errors;
 pub mod game;
+pub mod globals;
 pub mod msvc;
 pub mod riot;
 pub mod ui;
 pub mod utilities;
-pub mod globals;
 
 pub struct Core {
     game: Game,
     ui: Ui,
     status: CoreStatus,
     first_ui_update_since_reset: bool,
-    should_exit: bool
+    should_exit: bool,
 }
 
 #[derive(Copy, Clone)]
 pub struct CoreFetchData {
     should_reset: bool,
-    should_exit: bool
+    should_exit: bool,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -71,7 +71,7 @@ impl Core {
             ui: Ui::new(),
             status: CoreStatus::PreLoad,
             first_ui_update_since_reset: true,
-            should_exit: false
+            should_exit: false,
         }
     }
     fn initialize_detours() {
@@ -93,7 +93,11 @@ impl Core {
     }
 
     pub fn update(&mut self, d3d9_device: &mut X3dD3d9Device) -> CoreStatus {
-        self.status = if self.should_exit { CoreStatus::Exit } else { CoreStatus::from(self.game.update()) };
+        self.status = if self.should_exit {
+            CoreStatus::Exit
+        } else {
+            CoreStatus::from(self.game.update())
+        };
 
         match self.status {
             CoreStatus::Idle => {}

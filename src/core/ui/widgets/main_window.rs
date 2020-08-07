@@ -1,7 +1,12 @@
-use crate::core::{game::Game, riot::r3d::light_system::R3dLightSystem, ui::widgets::{
-    camera::CameraWidget, game_renderer::GameRendererWidget, r3d_light::R3dLightWidget, r3d_light_system::R3dLightSystemWidget,
-    r3d_sun::R3dSunWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, OpenableWidget, OpenableWidgetState, Widget,
-}, Core, CoreFetchData};
+use crate::core::{
+    game::Game,
+    riot::r3d::light_system::R3dLightSystem,
+    ui::widgets::{
+        camera::CameraWidget, game_renderer::GameRendererWidget, r3d_light::R3dLightWidget, r3d_light_system::R3dLightSystemWidget,
+        r3d_sun::R3dSunWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, OpenableWidget, OpenableWidgetState, Widget,
+    },
+    Core, CoreFetchData,
+};
 use imgui::Ui;
 
 pub struct MainWindowWidget {
@@ -30,7 +35,7 @@ impl MainWindowWidget {
     pub fn fetch_core_data(&self) -> CoreFetchData {
         CoreFetchData {
             should_reset: self.signal_reset,
-            should_exit: self.signal_detach
+            should_exit: self.signal_detach,
         }
     }
 
