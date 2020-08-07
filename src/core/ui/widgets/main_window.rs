@@ -1,14 +1,12 @@
-use crate::core::{
-    game::Game,
-    riot::r3d::light_system::R3dLightSystem,
-    ui::widgets::{
-        camera::CameraWidget, game_renderer::GameRendererWidget, r3d_light::R3dLightWidget, r3d_light_system::R3dLightSystemWidget,
-        r3d_sun::R3dSunWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, OpenableWidget, OpenableWidgetState, Widget,
-    },
-};
+use crate::core::{game::Game, riot::r3d::light_system::R3dLightSystem, ui::widgets::{
+    camera::CameraWidget, game_renderer::GameRendererWidget, r3d_light::R3dLightWidget, r3d_light_system::R3dLightSystemWidget,
+    r3d_sun::R3dSunWidget, simple_environment_asset::SimpleEnvironmentAssetWidget, OpenableWidget, OpenableWidgetState, Widget,
+}, Core, CoreFetchData};
 use imgui::Ui;
 
 pub struct MainWindowWidget {
+    signal_detach: bool,
+    signal_reset: bool,
     game_renderer_widget: OpenableWidget<GameRendererWidget>,
     camera_widget: OpenableWidget<CameraWidget>,
     simple_environment_asset_widget: OpenableWidget<SimpleEnvironmentAssetWidget>,
@@ -19,11 +17,20 @@ pub struct MainWindowWidget {
 impl MainWindowWidget {
     pub fn new() -> Self {
         MainWindowWidget {
+            signal_detach: false,
+            signal_reset: false,
             game_renderer_widget: OpenableWidget::new(GameRendererWidget::new()),
             camera_widget: OpenableWidget::new(CameraWidget::new()),
             simple_environment_asset_widget: OpenableWidget::new(SimpleEnvironmentAssetWidget::new()),
             sun_widget: OpenableWidget::new(R3dSunWidget::new()),
             world_light_system_widget: OpenableWidget::new(R3dLightSystemWidget::new()),
+        }
+    }
+
+    pub fn fetch_core_data(&self) -> CoreFetchData {
+        CoreFetchData {
+            should_reset: self.signal_reset,
+            should_exit: self.signal_detach
         }
     }
 
@@ -90,6 +97,8 @@ impl Widget for MainWindowWidget {
                 ui.text(im_str!(r"  \___ \  | | | |  | | |  | | . ` | | |   / /\ \  "));
                 ui.text(im_str!(r"  ____) |_| |_| |__| | |__| | |\  |_| |_ / ____ \ "));
                 ui.text(im_str!(r" |_____/|_____|_____/ \____/|_| \_|_____/_/    \_\"));
+                self.signal_detach = ui.button(im_str!("Detach"), [200.0, 30.0]);
+                self.signal_reset = ui.button(im_str!("Reset"), [200.0, 30.0]);
                 ui.separator();
 
                 if ui.button(im_str!("Renderer"), [200.0, 30.0]) {

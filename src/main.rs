@@ -6,6 +6,10 @@ use winapi::um::{
     minwinbase::LPTHREAD_START_ROUTINE,
     processthreadsapi::CreateRemoteThread,
 };
+use winapi::um::libloaderapi::{FreeLibrary, GetModuleFileNameA};
+use winapi::shared::minwindef::{HMODULE, MAX_PATH};
+use winapi::um::psapi::{EnumProcessModules, GetModuleFileNameExA};
+use winapi::um::winnt::{WCHAR, CHAR};
 
 mod process;
 
@@ -22,30 +26,33 @@ fn main() {
         inject_core(&process);
     }
 }
-
 unsafe fn inject_core(process: &Process) {
+
+    // Get LoadLibrary from kernel32
     let load_library_fn = GetProcAddress(
         GetModuleHandleA(b"kernel32.dll\0".as_ptr().cast()),
         b"LoadLibraryA\0".as_ptr().cast(),
     );
 
-    println!("load_library_fn: {:#?}", load_library_fn);
-
+    // Construct core dll path
     let core_dll_path = env::current_dir().unwrap().join(Path::new("sidonia_core.dll"));
     println!("{:#?}", core_dll_path);
     let core_dll_path = CString::new(core_dll_path.to_str().unwrap()).unwrap();
     let core_dll_path = core_dll_path.as_bytes();
 
+    // Allocate memory in the target process for the core dll name
     let dll_name_ptr = process
         .allocate_memory(core_dll_path.len() + 1)
         .expect("Failed to allocate memory for sidonia_core.dll name");
 
     println!("dll_name_ptr: {:#?}", dll_name_ptr);
 
+    // Write the core dll name to the target process
     process.write_buffer(dll_name_ptr, core_dll_path, core_dll_path.len() + 1);
 
     println!("dll written");
 
+    // Inject
     let core_thread_start_routine: LPTHREAD_START_ROUTINE = mem::transmute(load_library_fn);
     let core_thread_handle = CreateRemoteThread(
         process.handle(),

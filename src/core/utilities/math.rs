@@ -1,5 +1,6 @@
 use glam::{Quat, Vec3};
 
+/// this doesn't work so pls don't use thx
 pub fn euler_from_quat(quat: Quat) -> Vec3 {
     let sqw = (quat.w() * quat.w());
     let sqx = (quat.x() * quat.x());

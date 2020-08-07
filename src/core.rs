@@ -19,14 +19,23 @@ pub mod msvc;
 pub mod riot;
 pub mod ui;
 pub mod utilities;
+pub mod globals;
 
 pub struct Core {
     game: Game,
     ui: Ui,
+    status: CoreStatus,
     first_ui_update_since_reset: bool,
+    should_exit: bool
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone)]
+pub struct CoreFetchData {
+    should_reset: bool,
+    should_exit: bool
+}
+
+#[derive(Debug, Copy, Clone)]
 pub enum CoreStatus {
     Idle,
     PreLoad,
@@ -34,7 +43,7 @@ pub enum CoreStatus {
     Exit,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum CoreExitReason {
     GameEnded,
 }
@@ -55,51 +64,78 @@ impl Core {
     pub fn initialize() -> Self {
         log::info!("Initializing core...");
 
+        Core::initialize_detours();
+
+        Core {
+            game: Game::new(),
+            ui: Ui::new(),
+            status: CoreStatus::PreLoad,
+            first_ui_update_since_reset: true,
+            should_exit: false
+        }
+    }
+    fn initialize_detours() {
+        log::info!("Initializing detours...");
+
         //unsafe { detours::initialize_init_renderer_hook(Core::init_renderer).expect("Failed to hook InitRenderer"); }
 
         unsafe {
             detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene).expect("Failed to initialize EndScene hook");
             detours::initialize_riot_x3d_d3d9_device_reset_hook(Core::reset_device).expect("Failed to initialize ResetDevice hook");
         }
-
-        Core {
-            game: Game::new(),
-            ui: Ui::new(),
-            first_ui_update_since_reset: true,
-        }
     }
 
     pub fn ui_mut(&mut self) -> &mut Ui {
         &mut self.ui
     }
+    pub fn status(&self) -> CoreStatus {
+        self.status
+    }
 
     pub fn update(&mut self, d3d9_device: &mut X3dD3d9Device) -> CoreStatus {
-        let status = CoreStatus::from(self.game.update());
+        self.status = if self.should_exit { CoreStatus::Exit } else { CoreStatus::from(self.game.update()) };
 
-        //self.game.hud_manager_mut().unwrap().camera_logic_mut().unwrap().set_mode(RiotCameraLogicMode::TPS);
-
-        //log::info!("{:#?}", );
-
-        match status {
+        match self.status {
             CoreStatus::Idle => {}
             CoreStatus::Running => {
                 self.update_ui(d3d9_device);
                 self.first_ui_update_since_reset = false;
             }
-            CoreStatus::Exit => {}
+            CoreStatus::Exit => {
+                self.exit();
+            }
             CoreStatus::PreLoad => {}
         }
 
-        status
+        self.status
     }
 
     fn update_ui(&mut self, d3d9_device: &mut X3dD3d9Device) {
-        let game = &mut self.game;
-
-        self.ui.update(game, d3d9_device);
+        self.ui.update(&self.game, d3d9_device);
         self.ui.render();
         if !self.first_ui_update_since_reset {
-            self.ui.fetch_data(game);
+            self.ui.fetch_game_data(&mut self.game);
+        }
+
+        let core_fetch_data = self.ui.fetch_core_data();
+        if core_fetch_data.should_exit {
+            self.signal_detach();
+        }
+        if core_fetch_data.should_reset {
+            self.reset();
+        }
+    }
+
+    pub fn exit(&mut self) {
+        self.disable_hooks();
+
+        self.status = CoreStatus::Exit;
+    }
+    fn disable_hooks(&self) {
+        unsafe {
+            detours::disable_hook(&detours::InitRendererHook);
+            detours::disable_hook(&detours::RiotX3dD3D9DeviceEndSceneHook);
+            detours::disable_hook(&detours::RiotX3dD3d9DeviceResetHook);
         }
     }
 
@@ -107,6 +143,10 @@ impl Core {
         self.ui.reset();
 
         self.first_ui_update_since_reset = true;
+    }
+
+    pub fn signal_detach(&mut self) {
+        self.should_exit = true;
     }
 
     fn end_scene(device: *mut X3dD3d9Device) {

@@ -1,14 +1,10 @@
-use crate::core::{
-    game::Game,
-    riot::x3d::d3d9::device::X3dD3d9Device,
-    ui::{
-        input_manager::InputManager,
-        widgets::{
-            camera::CameraWidget, game_renderer::GameRendererWidget, main_window::MainWindowWidget, r3d_sun::R3dSunWidget,
-            simple_environment_asset::SimpleEnvironmentAssetWidget, Widget,
-        },
+use crate::core::{game::Game, riot::x3d::d3d9::device::X3dD3d9Device, ui::{
+    input_manager::InputManager,
+    widgets::{
+        camera::CameraWidget, game_renderer::GameRendererWidget, main_window::MainWindowWidget, r3d_sun::R3dSunWidget,
+        simple_environment_asset::SimpleEnvironmentAssetWidget, Widget,
     },
-};
+}, Core, CoreFetchData};
 use imgui::sys::ImVec4;
 use std::{mem::MaybeUninit, ptr::NonNull};
 use winapi::{
@@ -88,8 +84,12 @@ impl Ui {
         self.imgui_renderer.is_some() && self.input_manager.is_some()
     }
 
-    pub fn fetch_data(&self, game: &mut Game) {
+    pub fn fetch_game_data(&self, game: &mut Game) {
         self.main_window.fetch_data(game);
+    }
+
+    pub fn fetch_core_data(&self) -> CoreFetchData {
+        self.main_window.fetch_core_data()
     }
 
     pub fn update(&mut self, game: &Game, d3d9_device: &mut X3dD3d9Device) {

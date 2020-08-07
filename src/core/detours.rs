@@ -1,5 +1,6 @@
 use crate::core::{riot::x3d::d3d9::device::X3dD3d9Device, utilities::memory};
-use detour::static_detour;
+use detour::{static_detour, Function};
+use detour::StaticDetour;
 use std::{error::Error, mem};
 use winapi::{
     ctypes::c_int,
@@ -41,6 +42,12 @@ pub unsafe fn initialize_riot_x3d_d3d9_device_reset_hook(detour: RiotX3dD3d9Devi
     let address = mem::transmute(memory::convert_file_offset_to_ptr(0x009C4F50));
 
     RiotX3dD3d9DeviceResetHook.initialize(address, detour)?.enable()?;
+
+    Ok(())
+}
+
+pub unsafe fn disable_hook<T: Function>(detour: &StaticDetour<T>) -> Result<(), Box<dyn Error>> {
+    detour.disable()?;
 
     Ok(())
 }
