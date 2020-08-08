@@ -81,6 +81,7 @@ impl Core {
         //unsafe { detours::initialize_init_renderer_hook(Core::init_renderer).expect("Failed to hook InitRenderer"); }
 
         unsafe {
+            // TODO: make a hook register function
             detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene).expect("Failed to initialize EndScene hook");
             detours::initialize_riot_x3d_d3d9_device_reset_hook(Core::reset_device).expect("Failed to initialize ResetDevice hook");
         }
@@ -139,9 +140,12 @@ impl Core {
     pub fn exit(&mut self) {
         log::info!("Core exiting...");
 
-        // TODO: this is disgusting pls fix
-        if self.disable_hooks().is_err() {
-            log::error!("Failed to disable hooks during exit!");
+        match self.disable_hooks() {
+            Ok(()) => {},
+            Err(err) => {
+                log::error!("Failed to disable hooks during exit!");
+                log::error!("err: {:#?}", err);
+            }
         }
 
         self.status = CoreStatus::Exit;
@@ -150,7 +154,7 @@ impl Core {
         log::info!("Disabling hooks...");
 
         unsafe {
-            detours::disable_hook(&detours::InitRendererHook)?;
+            //detours::disable_hook(&detours::InitRendererHook)?;
             detours::disable_hook(&detours::RiotX3dD3D9DeviceEndSceneHook)?;
             detours::disable_hook(&detours::RiotX3dD3d9DeviceResetHook)?;
         }
