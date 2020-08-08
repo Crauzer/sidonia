@@ -17,6 +17,7 @@ pub mod detours;
 pub mod errors;
 pub mod game;
 pub mod globals;
+pub mod hook_manager;
 pub mod msvc;
 pub mod riot;
 pub mod ui;
@@ -141,7 +142,7 @@ impl Core {
         log::info!("Core exiting...");
 
         match self.disable_hooks() {
-            Ok(()) => {},
+            Ok(()) => {}
             Err(err) => {
                 log::error!("Failed to disable hooks during exit!");
                 log::error!("err: {:#?}", err);
