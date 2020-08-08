@@ -6,6 +6,7 @@ use crate::{
     },
     CORE,
 };
+use std::error::Error;
 use winapi::{
     _core::intrinsics::transmute,
     shared::{d3d9::IDirect3DDevice9, d3d9types::D3DPRESENT_PARAMETERS},
@@ -35,7 +36,7 @@ pub struct CoreFetchData {
     should_exit: bool,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum CoreStatus {
     Idle,
     PreLoad,
@@ -43,7 +44,7 @@ pub enum CoreStatus {
     Exit,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum CoreExitReason {
     GameEnded,
 }
@@ -91,8 +92,15 @@ impl Core {
     pub fn status(&self) -> CoreStatus {
         self.status
     }
+    pub fn scheduled_for_exit(&self) -> bool {
+        self.should_exit
+    }
 
     pub fn update(&mut self, d3d9_device: &mut X3dD3d9Device) -> CoreStatus {
+        if self.status == CoreStatus::Exit {
+            return CoreStatus::Exit;
+        }
+
         self.status = if self.should_exit {
             CoreStatus::Exit
         } else {
@@ -105,9 +113,7 @@ impl Core {
                 self.update_ui(d3d9_device);
                 self.first_ui_update_since_reset = false;
             }
-            CoreStatus::Exit => {
-                self.exit();
-            }
+            CoreStatus::Exit => {}
             CoreStatus::PreLoad => {}
         }
 
@@ -131,19 +137,30 @@ impl Core {
     }
 
     pub fn exit(&mut self) {
-        self.disable_hooks();
+        log::info!("Core exiting...");
+
+        // TODO: this is disgusting pls fix
+        if self.disable_hooks().is_err() {
+            log::error!("Failed to disable hooks during exit!");
+        }
 
         self.status = CoreStatus::Exit;
     }
-    fn disable_hooks(&self) {
+    fn disable_hooks(&self) -> Result<(), Box<dyn Error>> {
+        log::info!("Disabling hooks...");
+
         unsafe {
-            detours::disable_hook(&detours::InitRendererHook);
-            detours::disable_hook(&detours::RiotX3dD3D9DeviceEndSceneHook);
-            detours::disable_hook(&detours::RiotX3dD3d9DeviceResetHook);
+            detours::disable_hook(&detours::InitRendererHook)?;
+            detours::disable_hook(&detours::RiotX3dD3D9DeviceEndSceneHook)?;
+            detours::disable_hook(&detours::RiotX3dD3d9DeviceResetHook)?;
         }
+
+        Ok(())
     }
 
     pub fn reset(&mut self) {
+        log::info!("Core resetting...");
+
         self.ui.reset();
 
         self.first_ui_update_since_reset = true;
