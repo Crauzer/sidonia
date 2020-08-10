@@ -1,5 +1,5 @@
 use crate::core::hook_manager::HookManagerError::{HookEnableFailed, HookNotFound};
-use detour::{Function, GenericDetour, StaticDetour};
+use detour::{Function, GenericDetour, StaticDetour, RawDetour};
 use std::{
     collections::{hash_map::Entry, HashMap},
     error::Error,
@@ -7,8 +7,8 @@ use std::{
     path::Display,
 };
 
-pub struct HookManager<F: Function> {
-    hooks: HashMap<String, GenericDetour<F>>,
+pub struct HookManager {
+    hooks: HashMap<String, RawDetour>,
 }
 
 #[derive(Debug)]
@@ -19,16 +19,16 @@ pub enum HookManagerError {
     HookDisableFailed(String, detour::Error),
 }
 
-impl<F: Function> HookManager<F> {
+impl HookManager {
     pub fn new() -> Self {
         HookManager { hooks: HashMap::new() }
     }
 
-    pub fn hooks(&self) -> &HashMap<String, GenericDetour<F>> {
+    pub fn hooks(&self) -> &HashMap<String, RawDetour> {
         &self.hooks
     }
 
-    pub fn register_hook(&mut self, name: &str, hook: GenericDetour<F>) -> Result<(), HookManagerError> {
+    pub fn register_hook(&mut self, name: &str, hook: RawDetour) -> Result<(), HookManagerError> {
         match self.hooks.entry(String::from(name)) {
             Entry::Occupied(entry) => {
                 log::info!("Failed to register hook {} because it's already registered", name);

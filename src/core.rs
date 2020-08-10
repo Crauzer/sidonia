@@ -11,6 +11,7 @@ use winapi::{
     _core::intrinsics::transmute,
     shared::{d3d9::IDirect3DDevice9, d3d9types::D3DPRESENT_PARAMETERS},
 };
+use crate::core::hook_manager::HookManager;
 
 pub mod d3d9;
 pub mod detours;
@@ -24,6 +25,7 @@ pub mod ui;
 pub mod utilities;
 
 pub struct Core {
+    hook_manager: HookManager,
     game: Game,
     ui: Ui,
     status: CoreStatus,
@@ -69,6 +71,7 @@ impl Core {
         Core::initialize_detours();
 
         Core {
+            hook_manager: HookManager::new(),
             game: Game::new(),
             ui: Ui::new(),
             status: CoreStatus::PreLoad,
