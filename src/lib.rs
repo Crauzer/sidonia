@@ -5,6 +5,7 @@
 #![feature(never_type)]
 #![feature(generic_associated_types)]
 #![feature(ptr_offset_from)]
+#![feature(fn_traits)]
 #![allow(dead_code)]
 #![allow(unused_variables)]
 #![allow(unused_assignments)]

@@ -14,6 +14,8 @@ use winapi::{
 use crate::core::hook_manager::HookManager;
 use detour::RawDetour;
 use crate::core::utilities::memory;
+use crate::core::detours::{RiotX3dD3D9DeviceEndScene, RiotX3dD3d9DeviceReset};
+use std::mem;
 
 pub mod d3d9;
 pub mod detours;
@@ -104,6 +106,12 @@ impl Core {
         self.hook_manager.enable_hooks();
     }
 
+    pub fn hook_manager(&self) -> &HookManager {
+        &self.hook_manager
+    }
+    pub fn hook_manager_mut(&mut self) -> &mut HookManager {
+        &mut self.hook_manager
+    }
     pub fn ui_mut(&mut self) -> &mut Ui {
         &mut self.ui
     }
@@ -139,12 +147,14 @@ impl Core {
     }
 
     fn update_ui(&mut self, d3d9_device: &mut X3dD3d9Device) {
+
+        log::info!("update ui");
         self.ui.update(&self.game, d3d9_device);
         self.ui.render();
         if !self.first_ui_update_since_reset {
             self.ui.fetch_game_data(&mut self.game);
         }
-
+        log::info!("past render");
         let core_fetch_data = self.ui.fetch_core_data();
         if core_fetch_data.should_exit {
             self.signal_detach();
@@ -192,12 +202,14 @@ impl Core {
     }
 
     fn end_scene(device: *mut X3dD3d9Device) {
+        log::info!("hi1");
+        log::info!("{:#?}", device);
         unsafe {
             // Grab CORE
             if let Some(core) = CORE.as_mut() {
                 // Grab a MutexGuard to CORE
                 let mut core = core.lock().unwrap();
-
+                log::info!("hi2");
                 if let Some(device) = device.as_mut() {
                     let status = core.update(device);
                     match status {
@@ -207,9 +219,14 @@ impl Core {
                         CoreStatus::PreLoad => {}
                     }
                 }
+
+                log::info!("hi3");
+                let trampoline: RiotX3dD3D9DeviceEndScene = mem::transmute(core.hook_manager().get_hook_critical("RiotX3dD3D9DeviceEndScene").trampoline());
+                trampoline(device);
+                //core.hook_manager().call_hook::<RiotX3dD3D9DeviceEndScene>("RIOT_X3D_D3D9_DEVICE_END_SCENE", device);
             }
 
-            detours::RiotX3dD3D9DeviceEndSceneHook.call(device);
+            //detours::RiotX3dD3D9DeviceEndSceneHook.call(device);
         }
     }
     fn reset_device(device: *mut IDirect3DDevice9, present_parameters: *mut D3DPRESENT_PARAMETERS) {

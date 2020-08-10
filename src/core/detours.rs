@@ -15,13 +15,13 @@ type InitRendererFn = fn(LPVOID) -> c_int;
 // EndScene
 pub const RIOT_X3D_D3D9_DEVICE_END_SCENE: u32 = 0x009C2500;
 static_detour! { pub static RiotX3dD3D9DeviceEndSceneHook: unsafe extern "thiscall" fn(*mut X3dD3d9Device); }
-type RiotX3dD3D9DeviceEndScene = unsafe extern "thiscall" fn(*mut X3dD3d9Device);
+pub type RiotX3dD3D9DeviceEndScene = unsafe extern "thiscall" fn(*mut X3dD3d9Device);
 type RiotX3dD3D9DeviceEndSceneFn = fn(*mut X3dD3d9Device);
 
 // Reset Device
 pub const RIOT_X3D_D3D9_DEVICE_RESET: u32 = 0x009C4F50;
 static_detour! { pub static RiotX3dD3d9DeviceResetHook: unsafe extern "fastcall" fn(*mut IDirect3DDevice9, *mut D3DPRESENT_PARAMETERS); }
-type RiotX3dD3d9DeviceReset = unsafe extern "thiscall" fn(*mut IDirect3DDevice9, *mut D3DPRESENT_PARAMETERS);
+pub(crate) type RiotX3dD3d9DeviceReset = unsafe extern "thiscall" fn(*mut IDirect3DDevice9, *mut D3DPRESENT_PARAMETERS);
 type RiotX3dD3d9DeviceResetFn = fn(*mut IDirect3DDevice9, *mut D3DPRESENT_PARAMETERS);
 
 pub unsafe fn initialize_init_renderer_hook(detour: InitRendererFn) -> Result<(), Box<dyn Error>> {

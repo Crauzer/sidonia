@@ -1,11 +1,7 @@
 use crate::core::hook_manager::HookManagerError::{HookEnableFailed, HookNotFound};
 use detour::{Function, GenericDetour, StaticDetour, RawDetour};
-use std::{
-    collections::{hash_map::Entry, HashMap},
-    error::Error,
-    fmt,
-    path::Display,
-};
+use std::{collections::{hash_map::Entry, HashMap}, error::Error, fmt, path::Display, mem};
+use std::any::Any;
 
 pub struct HookManager {
     hooks: HashMap<String, RawDetour>,
@@ -24,9 +20,18 @@ impl HookManager {
         HookManager { hooks: HashMap::new() }
     }
 
-    pub fn hooks(&self) -> &HashMap<String, RawDetour> {
-        &self.hooks
+    pub fn get_hook(&self, name: &str) -> Option<&RawDetour> {
+        self.hooks.get(&String::from(name))
     }
+    pub fn get_hook_critical(&self, name: &str) -> &RawDetour {
+        self.get_hook(name).expect(&format!("Failed to get hook: {}", name))
+    }
+    //pub unsafe fn get_hook_trampoline<F: Sized>(&self, name: &str) -> Option<F> {
+    //    self.get_hook(name).and_then(|hook| Some(mem::transmute::<*const (), F>(hook.trampoline() as *const ())))
+    //}
+    //pub unsafe fn get_hook_trampoline_critical<F: Sized>(&self, name: &str) -> F {
+    //    self.get_hook_trampoline(name).expect(&format!("Failed to get trampoline for hook: {}", name))
+    //}
 
     pub fn register_hook(&mut self, name: &str, hook: RawDetour) -> Result<(), HookManagerError> {
         match self.hooks.entry(String::from(name)) {
