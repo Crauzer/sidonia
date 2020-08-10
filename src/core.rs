@@ -12,6 +12,8 @@ use winapi::{
     shared::{d3d9::IDirect3DDevice9, d3d9types::D3DPRESENT_PARAMETERS},
 };
 use crate::core::hook_manager::HookManager;
+use detour::RawDetour;
+use crate::core::utilities::memory;
 
 pub mod d3d9;
 pub mod detours;
@@ -68,27 +70,38 @@ impl Core {
     pub fn initialize() -> Self {
         log::info!("Initializing core...");
 
-        Core::initialize_detours();
-
-        Core {
+        let mut core = Core {
             hook_manager: HookManager::new(),
             game: Game::new(),
             ui: Ui::new(),
             status: CoreStatus::PreLoad,
             first_ui_update_since_reset: true,
             should_exit: false,
-        }
+        };
+
+        core.initialize_detours();
+
+        core
     }
-    fn initialize_detours() {
+    fn initialize_detours(&mut self) {
         log::info!("Initializing detours...");
 
         //unsafe { detours::initialize_init_renderer_hook(Core::init_renderer).expect("Failed to hook InitRenderer"); }
 
         unsafe {
             // TODO: make a hook register function
-            detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene).expect("Failed to initialize EndScene hook");
+            //detours::initialize_riot_x3d_d3d9_device_end_scene_hook(Core::end_scene).expect("Failed to initialize EndScene hook");
             detours::initialize_riot_x3d_d3d9_device_reset_hook(Core::reset_device).expect("Failed to initialize ResetDevice hook");
+
+            let riot_x3d_d3d9_device_end_scene_hook = RawDetour::new(
+                memory::convert_file_offset_to_ptr(detours::RIOT_X3D_D3D9_DEVICE_END_SCENE) as *const (),
+                Core::end_scene as *const ())
+                .expect("failllllllllll");
+
+            self.hook_manager.register_hook("RIOT_X3D_D3D9_DEVICE_END_SCENE", riot_x3d_d3d9_device_end_scene_hook);
         }
+
+        self.hook_manager.enable_hooks();
     }
 
     pub fn ui_mut(&mut self) -> &mut Ui {
